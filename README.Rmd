@@ -14,14 +14,37 @@ knitr::opts_chunk$set(
 library(ipccheckr)
 ```
 
-# `ipccheckr`::Toolkit for Performing IPC Acute Malnutrition-related Data Checks
+# `ipccheckr`:Toolkit for Performing IPC Acute Malnutrition-related Data Checks
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/tomaszaba/ipccheckr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tomaszaba/ipccheckr/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/tomaszaba/ipccheckr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tomaszaba/ipccheckr?branch=main)
 <!-- badges: end -->
 
-The goal of ipccheckr is to ...
+## Background
+
+IPC AMN is a global tool that uses a set o protocols to classify geographical areas into a 5-phases of severity based on the prevalence of acute malnutrition among children aged 6-59 months. Its main objective is to provide actionable information for decision-makers. It is not a data collection method _per se_, therefore it relies on evidence generated through other methods (representative surveys, screening, sentinel sites, etc). Before any evidence is used an IPC AMN analysis, checks must performed to ascertain the quality of data, following the minimum quality standards set in the protocol, hence its reliability. As such, only evidence that passes this check are allowed to be used in an IPC analysis exercise.
+
+## Why `ipccheckr`?
+
+The workflow for performing such checks overly tiring as the data “checker” needs to travel from software to softwares in this workflow: SPSS software (mostly) to process data and export to Excel or CSV to then import it into Emergency Nutrition Assessments (ENA) for SMART software for the standardized data quality checks through the plausibility check/report. This stage in the workflow need to be done for every survey area one-by-one, then transfer the results into an Excel spreadsheet. Then, run the prevalence analysis and transfer the results to a spreadsheet and so on and so forth. Sometimes, a fourth tool is used to correct for likely overestimation of acute malnutrition prevention when using MUAC and there is an imbalanced population distribution in the sample. This is tedious and time-consuming especially when you are tasked to check a huge dataset.
+
+## What does `ipccheckr` do?
+
+`ipccheckr` comes to make your checks a joyful experience while you navigate throughout the aforementioned analysis workflow thanks to its array of useful utility functions that going from:  
+
+1. Checking sampling and sample size requirements for surveys, sentinel sites, screening - guidance  
+
+2. The *de facto* quality checks of measurements. These come with useful functions for summarizing your check findings - guidance  
+
+3. Prevalence analysis for:  
+
+    * Surveys based on WHZ, MUAC, including reporting the combined prevalence with design effect and index of dispersion  
+    * Screening and sentinel sites based on MUAC  
+    
+4. Provides useful functions for visualization  
+
+**IMPORTANT**: Please note that `ipccheckr` is still highly experimental and is undergoing a lot of development. Hence, any functionalities described below have a high likelihood of changing interface or approach as we aim for a stable working version.
 
 ## Installation
 
@@ -35,35 +58,18 @@ devtools::install_github("tomaszaba/ipccheckr")
 Then load to in memory with
 ```{r example}
 library(ipccheckr)
-## basic example code
 ```
-
-## What does `ipccheckr` do?
-
-Please note that `ipccheckr` is still highly experimental and is undergoing a lot of development. Hence, any functionalities described below have a high likelihood of changing interface or approach as we aim for a stable working version.
-
-As of now, `ipccheckr` provides utility functions to be used in different, but interdependent, data analysis workflow, as described below:
-
-###  Sampling and sample size
-
-`ipccheckr` provides useful utility functions for verifying if the minimum sampling and sample size requirements for surveys, screenings and community-based sentinel sites were met.
-
-### The _de facto_ quality checks
-
-For data that passes the above described checks, `ipccheckr` provides utility functions for performing the _de facto_ quality checks according to the source of data and the type of method used to measure the condition, either weight-for-height or mid upper-arm circumference (MUAC). For the latter, the array of utility functions goes from crude MUAC to muac-for-age zscore (MFAZ), based on IPC parameters that are mostly supported by the SMART methodology.
-
-### Prevalence calculations
-
-Useful set of functions for calculating acute malnutrition prevalence based on WHZ, with its respective descriptive statistics such as design effect, Green’s Index to tell if acute malnutrition cases are randomly distributed or clumped together, calculated prevalence when SD is >1.2, including the recalculated prevalence of SAM and MAM
-
-For MUAC, as known and extensively documented in the literature, MUAC is biased towards younger children (6-24 months), so that in an imbalanced sample size, composed of too many younger children compared to older children (24-59 months), the prevalence is likely to be overestimated and in such situations, the observed prevalence should be corrected to the expected population distribution, where applicable. `ipccheckr` provides utilities to address this situation in a dynamic and automated way, where applicable.
-	
-### Visualization of checks results
-
-`ipccheckr` provides useful utility functions that produces presentable output results in a table, that is, summarized for each survey area, save-able in Excel spreadsheet and use plots to visualize the distribution of some test results and prevalence. 
 
 ## Useful workflow with `ipccheckr`
 
 The proposed `ipccheckr` workflow is presented below: 
 
 _To be updated with a diagram_
+
+# Citation
+
+If you find `ipccheckr` package useful, please cite using the suggested citation provided by a call to `citation` function as follows:
+
+```{r citation}
+citation("ipccheckr")
+```
