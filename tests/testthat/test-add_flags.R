@@ -28,3 +28,30 @@ local(
   }
 )
 
+## Test flagging function against expected SMART flags using {nipnTK} package
+
+svy <- nipnTK::flag.ex03
+
+
+## Function to apply SMART flagging approach as described in https://smartmethodology.org/survey-planning-tools/smart-methodology/plausibility-check/?doing_wp_cron=1715286761.8427860736846923828125
+
+smart_flag_zscore <- function(df, z) {
+  z_cutoffs <- mean(df[[z]], na.rm = TRUE) |>
+    (\(x) c(x - 3, x + 3))()
+
+  z_flag <- ifelse(df[[z]] < z_cutoffs[1] | df[[z]] > z_cutoffs[2], 1, 0)
+
+  z_flag
+}
+
+
+testthat::test_that(
+  "add_flags returns expected output", {
+    expect_equal(
+      add_flags(x = svy$haz, method = "mfaz"),
+      split(svy, svy$state) |>
+        lapply(FUN = smart_flag_zscore, z = "haz") |>
+        unlist()
+    )
+  }
+)
