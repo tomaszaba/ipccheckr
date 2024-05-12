@@ -1,0 +1,139 @@
+# Tests checks: Quality Checkers------------------------------------------------
+## Test check: check_plausibility_mfaz() ----
+
+local(
+  {
+    ### Input data ----
+    df <- data.01 |>
+      process_age() |>
+      process_muac_data(
+        sex = "sex",
+        age = "age",
+        muac = "muac",
+        .recode_sex = TRUE,
+        .recode_muac = TRUE,
+        unit = "cm"
+      ) |>
+      check_plausibility_mfaz(
+        flags = "flags",
+        sex = "sex",
+        muac = "muac",
+        age = "age",
+        area = area
+      )
+
+    ### The test ----
+    test_that(
+      "evaluate_quality_mfaz() return a df with expected lentgh and columns",
+      {
+        testthat::expect_s3_class(df, "tbl_df")
+        testthat::expect_vector(df)
+        testthat::expect_equal(ncol(df), 18)
+        testthat::expect_equal(nrow(df), 11)
+        testthat::expect_true(
+          all(c(
+            "area", "n", "flagged", "flagged_class", "sex_ratio",
+            "sex_ratio_class", "age_ratio", "age_ratio_class",
+            "dps", "dps_class", "sd", "sd_class", "skew", "skew_class",
+            "kurt", "kurt_class", "quality_score", "quality_class"
+          ) %in% names(df)
+
+          )
+        )
+      }
+    )
+  }
+)
+
+## Test check: check_plausibility_whz() ----
+
+local(
+  {
+    ### Input data ----
+    df <- data.01 |>
+      process_age(
+        DoS = "dos",
+        DoB = "dob",
+        age = "age"
+      ) |>
+      process_whz_data(
+        sex = "sex",
+        wgt = "weight",
+        hgt = "height",
+        .recode_sex = TRUE
+      ) |>
+      check_plausibility_whz(
+        sex = "sex",
+        age = "age",
+        wgt = "weight",
+        hgt = "height",
+        flags = "flags",
+        area = area
+      )
+
+    ### The test ----
+    test_that(
+      "check_plausibility_whz() return a df with expected lentgh and columns",
+      {
+        testthat::expect_s3_class(df, "tbl_df")
+        testthat::expect_vector(df)
+        testthat::expect_equal(ncol(df), 20)
+        testthat::expect_equal(nrow(df), 11)
+        testthat::expect_true(
+          all(c(
+            "area", "n", "flagged", "flagged_class", "sex_ratio",
+            "sex_ratio_class", "age_ratio", "age_ratio_class",
+            "dps_wgt", "dps_wgt_class", "dps_hgt", "dps_hgt_class",
+            "sd", "sd_class", "skew", "skew_class", "kurt", "kurt_class",
+            "quality_score", "quality_class"
+          ) %in% names(df)
+
+          )
+        )
+      }
+    )
+  }
+)
+
+## Test check: check_plausibility_crude_muac() ----
+
+local(
+  {
+    ### Input data ----
+    df <- data.01 |>
+      process_muac_data(
+        sex = "sex",
+        muac = "muac",
+        .recode_sex = TRUE,
+        .recode_muac = FALSE,
+        unit = "none"
+      ) |>
+      check_plausibility_crude_muac(
+        sex = "sex",
+        muac = "muac",
+        flags = "flags",
+        area = area
+      )
+
+    ### The test ----
+    test_that(
+      "check_plausibility_crude_muac() return a df with expected lentgh and columns",
+      {
+        testthat::expect_s3_class(df, "tbl_df")
+        testthat::expect_vector(df)
+        testthat::expect_equal(ncol(df), 10)
+        testthat::expect_equal(nrow(df), 11)
+        testthat::expect_true(
+          all(c(
+            "area", "n", "flagged", "flagged_class", "sex_ratio",
+            "sex_ratio_class", "dps", "dps_class",
+            "sd", "sd_class"
+          ) %in% names(df)
+
+          )
+        )
+      }
+    )
+  }
+)
+
