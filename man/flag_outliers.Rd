@@ -4,13 +4,13 @@
 \alias{flag_outliers}
 \title{Identify and flag outliers in WHZ, MFAZ, and crude MUAC datasets}
 \usage{
-flag_outliers(x, method = c("zscore", "crude"))
+flag_outliers(x, type = c("zscore", "crude"))
 }
 \arguments{
 \item{x}{A numeric value from the variable storing either WHZ or MFAZ or crude
 MUAC's observations in the dataset, as applicable.}
 
-\item{method}{The method you wish \code{flag_outliers()} to identify flags on.
+\item{type}{The method you wish \code{flag_outliers()} to identify flags on.
 A choice between "zscore" and "crude". If you wish to get flags for WHZ or
 MFAZ, set \code{method = "zscore"}. Alternatively, if your wish to get flags for
 crude MUAC, set \code{method = "crude"}. The default is "zscore". If by mistake
@@ -31,14 +31,17 @@ fixed range (<100mm and >200mm), based a multicountry research findings by
 \href{https://doi.org/10.1111/mcn.13478}{Bilukha, O., & Kianian, B. (2023).}
 }
 \examples{
- # Sample data of crude MUAC
- x <- c(90, 110, 140, 200, 119, 235)
- # Apply `flag_outliers()` with method set to "crude"
- flag_outliers(x, method = "crude")
 
- # Sample data of MFAZ
- x <- c(-2.265, -5.275, -0.72, -2.261, -2.264, -4.451, -2.261, -1.828)
- # Apply `flag_outliers()` with method set to "zscore"
- flag_outliers(x, method = "zscore")
+# Sample data of crude MUAC ----
+x <- c(90, 110, 140, 200, 119, 235)
+
+# Apply `flag_outliers()` with type set to "crude" ----
+flag_outliers(x, type = "crude")
+
+# Sample data of MFAZ ----
+x <- c(-2.265, -5.275, -0.72, -2.261, -2.264, -4.451, -2.261, -1.828)
+
+# Apply `flag_outliers()` with type set to "zscore" ----
+flag_outliers(x, type = "zscore")
 
 }

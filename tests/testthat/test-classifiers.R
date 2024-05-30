@@ -21,14 +21,14 @@ local(
       factor(levels = c("Excellent", "Good", "Acceptable", "Problematic"))
 
     #### Observed results ----
-    class_flagged_data <- classify_percent_flagged(props, method = "mfaz")
+    class_flagged_data <- classify_percent_flagged(props, type = "mfaz")
 
     #### The test ----
-    test_that(
-      "classify_percent_flagged() with method set to 'mfaz' returns
+    testthat::test_that(
+      "classify_percent_flagged() with type set to 'mfaz' returns
       expected output and correct classifications",
       {
-        expect_vector(
+        testthat::expect_vector(
           class_flagged_data,
           ptype = factor(
             c("Excellent", "Good", "Acceptable", "Problematic"),
@@ -36,7 +36,7 @@ local(
           ),
           size = 15
         )
-        expect_equal(class_flagged_data, expected_results)
+        testthat::expect_equal(class_flagged_data, expected_results)
       }
     )
   }
@@ -62,14 +62,14 @@ local(
       factor(levels = c("Excellent", "Good", "Acceptable", "Problematic"))
 
     #### Observed results ----
-    class_flagged_data <- classify_percent_flagged(props, method = "crude")
+    class_flagged_data <- classify_percent_flagged(props, type = "crude")
 
     #### The test ----
-    test_that(
-      "classify_percent_flagged() with method set to 'crude' returns
+    testthat::test_that(
+      "classify_percent_flagged() with type set to 'crude' returns
       expected output and correct classifications",
       {
-        expect_vector(
+        testthat::expect_vector(
           class_flagged_data,
           ptype = factor(
             c("Excellent", "Good", "Acceptable", "Problematic"),
@@ -77,7 +77,7 @@ local(
           ),
           size = 15
         )
-        expect_equal(class_flagged_data, expected_results)
+        testthat::expect_equal(class_flagged_data, expected_results)
       }
     )
   }
@@ -105,7 +105,7 @@ local(
     class_age_sex_ratio <- classify_age_sex_ratio(pvalues)
 
     ### The test ----
-    test_that(
+    testthat::test_that(
       "classify_age_sex_ratio returns expected outpout and correct
       classifications",
       {
@@ -139,19 +139,19 @@ local(
     )
 
     #### Observed results ----
-    class_sd_mfaz <- classify_sd(sdvalues, method = "zscore")
+    class_sd_mfaz <- classify_sd(sdvalues, type = "zscore")
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "classify_sd with method set to 'zscore' returns expected outpout
       and correct classifications",
       {
-        expect_vector(
+        testthat::expect_vector(
           class_sd_mfaz,
           ptype = character(),
           size = 15
         )
-        expect_equal(class_sd_mfaz, expected_results)
+        testthat::expect_equal(class_sd_mfaz, expected_results)
       }
     )
   }
@@ -173,13 +173,13 @@ local(
       factor(levels = c("Excellent", "Acceptable", "Poor", "Problematic"))
 
     #### Observed results ----
-    class_sd_muac <- classify_sd(sdvalues, method = "crude")
+    class_sd_muac <- classify_sd(sdvalues, type = "crude")
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "classify_sd() returns expected outpout and correct classifications",
       {
-        expect_vector(
+        testthat::expect_vector(
           class_sd_muac,
           ptype = factor(
             c("Excellent", "Acceptable", "Poor", "Problematic"),
@@ -187,7 +187,7 @@ local(
           ),
           size = 15
         )
-        expect_equal(class_sd_muac, expected_results)
+        testthat::expect_equal(class_sd_muac, expected_results)
       }
     )
   }
@@ -207,10 +207,12 @@ local(
     obs <- dplyr::tibble(classify_overall_quality(df))
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "classify_overall_quality() works",
       {
-        expect_s3_class(obs, "tbl")
+        testthat::expect_s3_class(obs, "tbl")
+        testthat::expect_equal(names(obs[[1]]), names(expected_r[[1]]))
+        testthat::expect_equal(obs[[1]] == "Problematic", expected_r[[1]] == "Problematic")
       }
     )
   }

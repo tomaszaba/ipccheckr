@@ -4,13 +4,13 @@
 \alias{classify_sd}
 \title{Classify how much high is the value of standard deviation}
 \usage{
-classify_sd(sd, method = c("zscore", "crude"))
+classify_sd(sd, type = c("zscore", "crude"))
 }
 \arguments{
 \item{sd}{A numeric vector containing values for standard deviation of the
 method you wish the work on.}
 
-\item{method}{The method to which you wish to classify how much high is the
+\item{type}{The method to which you wish to classify how much high is the
 value of standard deviation. A choice between "zscore" MFAZ or WHZ and
 "crude" for crude MUAC.}
 }
@@ -32,15 +32,15 @@ For crude MUAC, the cut-offs are based on the
 sdvalues <- seq(0.7, 1.3, by = 0.001) |>
 sample(size = 9, replace = TRUE)
 
-## Apply the function with `method = "zscore` ----
-classify_sd(sdvalues, method = "zscore")
+## Apply the function with `type = "zscore` ----
+classify_sd(sdvalues, type = "zscore")
 
-## Using `method = "crude"` ----
+## Using `type = "crude"` ----
 ### Create sample data ----
 sdvalues <- seq(9, 30, by = 2) |>
 sample(size = 20, replace = TRUE)
 
-### Apply the function with `method = "crude"` ----
-classify_sd(sdvalues, method = "crude")
+### Apply the function with `type = "crude"` ----
+classify_sd(sdvalues, type = "crude")
 
 }

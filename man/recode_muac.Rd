@@ -20,6 +20,6 @@ A transformed vector into the unit you wish to have.
 Sometimes, a vector containing MUAC values may be in centimeters or in
 millimeters. You may want to get in the right format to use with
 \link[zscorer:addWGSR]{zscorer::addWGSR} or \code{\link[nipnTK:digitPreference]{nipnTK::digitPreference()}}. \code{recode_muac()} helps you
-getting the vector in the right format for the job! It works inside
-works inside \code{\link[dplyr:mutate]{dplyr::mutate()}} or \code{\link[base:transform]{base::transform()}}.
+getting the vector in the right format for the job! It works inside works
+inside \code{\link[dplyr:mutate]{dplyr::mutate()}} or \code{\link[base:transform]{base::transform()}}.
 }

@@ -35,6 +35,7 @@ wish to get the age ratio for children 6-29/30-59 like in SMART Methodology,
 then you should use \code{\link[nipnTK:ageRatioTest]{nipnTK::ageRatioTest()}} NOT \code{age_ratio_test()}.
 }
 \examples{
+
 ## Have a sample data ----
 age <- seq(6,59) |> sample(300, replace = TRUE)
 

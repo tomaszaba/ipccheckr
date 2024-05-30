@@ -17,16 +17,16 @@ to the classification.
 \description{
 The function assigns a penalty score for a given category of test classification.
 The score range varies between 0 (when "Excellent") to 20 (when "Problematic") for
-both flagged data and standard deviation. This was
-borrowed from the \href{https://smartmethodology.org/}{ENA for SMART software}
+both flagged data and standard deviation. This was borrowed from the
+\href{https://smartmethodology.org/}{ENA for SMART software}
 In the SMART Methodology, flagged data and standard deviation are tho test
 criteria that gets the highest penalty scores, so it is here.
 }
 \examples{
 
- ## Sample data ----
- x <- c("Excellent", "Problematic", "Acceptable", "Good")
- ## Apply the function ----
- assign_penalty_points_flags_and_sd(x)
+## Sample data ----
+x <- c("Excellent", "Problematic", "Acceptable", "Good")
+## Apply the function ----
+assign_penalty_points_flags_and_sd(x)
 
 }
