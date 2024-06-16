@@ -21,9 +21,10 @@ both, according to the \href{https://smartmethodology.org/}{ENA for SMART softwa
 }
 \examples{
 
- ## A vector storing age ratio or sex ratio p-values' classification ----
- x <- c("Excellent", "Problematic", "Acceptable", "Good")
- ## Apply the function ----
- assign_penalty_points_age_sex_ratio(x)
+## A vector storing age ratio or sex ratio p-values' classification ----
+x <- c("Excellent", "Problematic", "Acceptable", "Good")
+
+## Apply the function ----
+assign_penalty_points_age_sex_ratio(x)
 
 }

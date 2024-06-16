@@ -4,12 +4,12 @@
 \alias{classify_percent_flagged}
 \title{Classify how much high is the proportion of flagged data}
 \usage{
-classify_percent_flagged(p, method = c("mfaz", "whz", "crude"))
+classify_percent_flagged(p, type = c("mfaz", "whz", "crude"))
 }
 \arguments{
 \item{p}{A numeric vector containing the proportions of flagged data}
 
-\item{method}{The method to which you wish to classify how much high are the
+\item{type}{The method to which you wish to classify how much high are the
 proportions of flagged data. A choice between "mfaz" for MFAZ, "whz" for WHZ
 and "crude" for crude MUAC.}
 }
@@ -20,12 +20,11 @@ amount of flagged data. The categories of classification ranges are:
 }
 \description{
 \code{classify_percent_flagged()} tells you how much high is the proportion of
-of flagged data in your data set, an indication of quality of data. its a
+of flagged data in your data set, an indication of quality of data. Its a
 reusable function for MFAZ, WHZ and crude MUAC. The cut-offs for MFAZ and
 crude MUAC are the same with the upper limit of 2\%. This is based on the
-research findings by
-\href{https://doi.org/10.1111/mcn.13478}{Bilukha, O., & Kianian, B. (2023).},
-from a multicountry analyss, found that the correlation between the mean
+research findings by \href{https://doi.org/10.1111/mcn.13478}{Bilukha, O., & Kianian, B. (2023).},
+from a multi-country analysis, found that the correlation between the mean
 MFAZ and crude MUAC was almost perfect (r=99). As for WHZ, the cut-offs are
 exactly those in the \href{https://smartmethodology.org/}{SMART Methodology}.
 }
@@ -35,7 +34,7 @@ exactly those in the \href{https://smartmethodology.org/}{SMART Methodology}.
 prop <- c(0.0, 0.0, 0.01, 0.015, 0.2, 0.015, 0.016, 0.017, 0.05, 0.06,
 0.03, 0.03, 0.04, 0.000001, 0)
 
-## Apply the function setting method to "whz" for instance ----
-classify_percent_of_outliers(prop, method = "whz")
+## Apply the function setting type to "whz" for instance ----
+classify_percent_flagged(prop, type = "whz")
 
 }

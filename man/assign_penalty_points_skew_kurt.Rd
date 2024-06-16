@@ -20,9 +20,11 @@ both, according to the \href{https://smartmethodology.org/}{ENA for SMART softwa
 }
 \examples{
 
- ## A vector storing Skewness or Kurtosis test classification ----
- x <- c("Excellent", "Problematic", "Acceptable", "Good")
- ## Apply the function ----
- assign_penalty_points_skew_kurt(x)
+## A vector storing Skewness or Kurtosis test classification ----
+
+x <- c("Excellent", "Problematic", "Acceptable", "Good")
+
+## Apply the function ----
+assign_penalty_points_skew_kurt(x)
 
 }

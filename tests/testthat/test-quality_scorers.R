@@ -21,17 +21,11 @@ local(
     scores_sd_mfaz <- assign_penalty_points_flags_and_sd(class_sd_mfaz)
 
     ### The test ----
-    test_that(
+    testthat::test_that(
       "scores are equal to expected",
       {
-        expect_equal(
-          scores_sd_mfaz,
-          expected_sd_mfaz_scores
-          )
-        expect_type(
-          scores_sd_mfaz,
-          "double"
-          )
+        testthat::expect_equal(scores_sd_mfaz, expected_sd_mfaz_scores)
+        testthat::expect_type(scores_sd_mfaz, "double")
       }
     )
   }
@@ -59,17 +53,11 @@ local(
     scores_skew_kurt <- assign_penalty_points_skew_kurt(class_skew_kurt)
 
     ### The test ----
-    test_that(
+    testthat::test_that(
       "scores are equal to expected",
       {
-        expect_equal(
-          scores_skew_kurt,
-          expected_skew_kurt_scores
-          )
-        expect_type(
-          scores_skew_kurt,
-          "double"
-          )
+        testthat::expect_equal(scores_skew_kurt, expected_skew_kurt_scores)
+        testthat::expect_type(scores_skew_kurt, "double")
       }
     )
   }
@@ -93,14 +81,14 @@ local(
    expected_score <- 41
 
     ### Observed results ----
-    overall_score <- get_quality_score(df, method = "mfaz")
+    overall_score <- compute_quality_score(df, type = "mfaz")
 
     ### The test ----
     testthat::test_that(
       "get_quality_score() return the correct values for a given classification",
       {
-        expect_vector(overall_score)
-        expect_equal(overall_score, expected_score)
+        testthat::expect_vector(overall_score)
+        testthat::expect_equal(overall_score, expected_score)
 
       }
     )

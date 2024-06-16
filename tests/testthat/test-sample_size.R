@@ -4,17 +4,17 @@ local(
   {
 
     ## Observed results ----
-    observed <- check_sample_size_requirements(
-      df = data.01,
-      cluster = "cluster",
-      method = "survey"
+    observed <- check_sample_size(
+      df = anthro_data,
+      .group = "cluster",
+      data_type = "survey"
       )
 
     ## The test ----
-    test_that(
-      "check_sample_size_requirements() returns a data frame object",
+    testthat::test_that(
+      "check_sample_size() returns a data frame object",
       {
-        expect_s3_class(
+        testthat::expect_s3_class(
           object = observed,
           class = "data.frame",
           exact = TRUE

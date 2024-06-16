@@ -8,7 +8,7 @@ process_muac_data(
   df,
   sex,
   muac,
-  age,
+  age = NULL,
   .recode_sex = TRUE,
   .recode_muac = TRUE,
   unit = c("cm", "mm", "none")
@@ -47,40 +47,38 @@ data, therefore not possible to supply in this function, \code{process_muac_data
 will only return \code{flags}. This will refer to flags based on crude MUAC.
 }
 \description{
-\code{process_muac_data()} gets your input data ready for downstream analysis.
+\code{process_muac_data()} gets your input data ready for downstream MUAC related
+analysis.
 }
 \examples{
+
 ## Have a sample data ----
- sex <- seq(1,2) |>
- sample(15, replace = TRUE)
- muac <- seq(90, 250) |>
- sample(15)
- age <- seq(6,59) |>
- sample(15)
- data <- data.frame(sex, muac, age)
 
- ## You can use process_muac_data in two ways ----
- ### Chained with process_age()
- data |>
- process_age (DoS = NULL, DoB = NULL, age = "age") |>
+df <- data.frame(
+ survey_date = as.Date(c(
+ "2023-01-01", "2023-01-01", "2023-01-01", "2023-01-01", "2023-01-01")),
+ birthdate = as.Date(c(
+ "2019-01-01", NA, "2018-03-20", "2019-11-05", "2021-04-25")),
+ age = c(NA, 36, NA, NA, NA),
+ sex = c("m", "f", "m", "m", "f"),
+ muac = c(110, 130, 300, 123, 125)
+ )
+
+ ## Apply function ----
+ df |>
+ process_age(
+ svdate = "survey_date",
+ birdate = "birthdate",
+ age = age
+ ) |>
  process_muac_data(
- sex,
- muac,
- age,
- .recode_sex = FALSE,
+ sex = sex,
+ age = "age",
+ muac = muac,
+ .recode_sex = TRUE,
  .recode_muac = TRUE,
  unit = "cm"
  )
 
- ## Or by just applying alone ----
- data |>
- process_muac_data(
- sex,
- muac,
- age,
- .recode_sex = FALSE,
- .recode_muac = TRUE,
- unit = "cm"
- )
 
 }

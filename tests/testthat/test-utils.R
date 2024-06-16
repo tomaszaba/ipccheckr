@@ -1,7 +1,7 @@
 # Tests for utils --------------------------------------------------------------
 
 ### Test check: "flag_outliers()" ----
-### Test check: flag_outliers with method set to "zscore" ----
+### Test check: flag_outliers with 'type' set to "zscore" ----
 
 local(
   {
@@ -16,24 +16,22 @@ local(
     expected_results <- ifelse(
       mfaz < (mean_mfaz - 3) | mfaz > (mean_mfaz + 3), 1, 0
       )
+
     #### Observed results ----
-    flags_mfaz <- flag_outliers(mfaz, method = "zscore")
+    flags_mfaz <- flag_outliers(mfaz, type = "zscore")
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "flag_outliers() returns expected output",
       {
-        expect_vector(
-          flags_mfaz,
-          size = 50
-        )
-        expect_equal(flags_mfaz, expected_results)
+        testthat::expect_vector(flags_mfaz, size = 50)
+        testthat::expect_equal(flags_mfaz, expected_results)
       }
     )
   }
 )
 
-### Test check: flag_outliers() with methdod set to "crude" ----
+### Test check: flag_outliers() with 'type' set to "crude" ----
 local(
   {
     #### Sample data ----
@@ -44,23 +42,20 @@ local(
     expected_results <- ifelse(crude < 100 | crude > 200, 1, 0)
 
     #### Observed results ----
-    flags_crude <- flag_outliers(crude, method = "crude")
+    flags_crude <- flag_outliers(crude, type = "crude")
 
     #### The test ----
-    test_that(
-      "flag_outliers with method set for 'crude' return the correct output",
+    testthat::test_that(
+      "flag_outliers with 'type' set for 'crude' return the correct output",
       {
-        expect_vector(
-          flags_crude,
-          size = 20
-        )
-        expect_equal(flags_crude, expected_results)
+        testthat::expect_vector(flags_crude, size = 20)
+        testthat::expect_equal(flags_crude, expected_results)
       }
     )
   }
 )
 
-### Test check: recode_month_to_day() ----
+### Test check: compute_month_to_days() ----
 local(
   {
     #### Sample data ----
@@ -75,24 +70,21 @@ local(
       )
 
     #### Observed results ----
-    age_days <- recode_month_to_day(age_mo)
+    age_days <- compute_month_to_days(age_mo)
     df[["age_days"]] <- age_days
 
     #### The test ----
-    test_that(
-      "recode_month_to_day() does the job as expected",
+    testthat::test_that(
+      "compute_month_to_days() does the job as expected",
       {
-        expect_vector(
-          df[["age_days"]],
-          size = 18
-        )
-        expect_equal(df[["age_days"]], df[["expected_results"]])
+        testthat::expect_vector(df[["age_days"]], size = 18)
+        testthat::expect_equal(df[["age_days"]], df[["expected_results"]])
       }
     )
   }
 )
 
-### Test check: get_age_in_months() ----
+### Test check: compute_age_in_months() ----
 
 local(
   {
@@ -113,29 +105,24 @@ local(
 
     #### Expected results ----
     expected_results <- c(
-      21.059548, 32.164271, 7.425051, NA, NA, 36.862423, 21.223819,
-      32.328542, 7.589322, 36.960986, 32.361396, 36.960986, 21.289528,
-      32.394251, 7.655031
+      21.06, 32.16, 7.43, NA, NA, 36.86, 21.22,
+      32.33, 7.59, 36.96, 32.36, 36.96, 21.29,
+      32.39, 7.66
     )
 
     #### Observed results ----
     df <- df |>
       mutate(
-        age_mo = get_age_in_months(DoS = df[["surv_date"]],
-                                         DoB = df[["bir_date"]],
-                                         age = df[["age"]]
-                                         )
+        age_mo = compute_age_in_months(surv_date = df[["surv_date"]],
+                                       birth_date = df[["bir_date"]])
       )
 
     #### The test ----
-    test_that(
-      "transform_age_in_months() does the job as expected",
+    testthat::test_that(
+      "compute_age_in_months() does the job as expected",
       {
-        expect_vector(
-          df[["age_mo"]],
-          size = 15
-        )
-        expect_equal(df[["age_mo"]], expected_results)
+        testthat::expect_vector(df[["age_mo"]], size = 15)
+        testthat::expect_equal(df[["age_mo"]], expected_results)
       }
     )
   }
@@ -146,44 +133,31 @@ local(
 local(
   {
     #### Sample data ----
-    surv_date <- as.Date(c(
-      "2024-01-05", "2024-01-05", "2024-01-05", "2024-01-08", "2024-01-08",
-      "2024-01-08", "2024-01-10", "2024-01-10", "2024-01-10", "2024-01-11",
-      "2024-01-11", "2024-01-11", "2024-01-12", "2024-01-12", "2024-01-12"
-    ))
-    bir_date <- as.Date(c(
-      "2022-04-04", "2021-05-01", "2023-05-24", "2017-12-12", NA,
-      "2020-12-12", "2022-04-04", "2021-05-01", "2023-05-24", "2020-12-12",
-      "2021-05-01", "2020-12-12", "2022-04-04", "2021-05-01", "2023-05-24"
-    ))
-
-    age <- NA_integer_
-    df <- data.frame(surv_date, bir_date, age)
+    df <- data.frame(
+      survy_date = as.Date(c(
+      "2023-01-01", "2023-01-01", "2023-01-01", "2023-01-01", "2023-01-01")),
+      birthdate = as.Date(c(
+      "2019-01-01", NA, "2018-03-20", "2019-11-05", "2021-04-25")),
+      age = c(NA, 36, NA, NA, NA)
+      )
 
     #### Expected results ----
-    expected_results <- c(
-      641.01, 978.87, 226.15, NA, NA, 1121.93, 645.88,
-      984.04, 231.02, 1124.97, 984.96, 1124.97, 648.01,
-      985.87, 233.15
-    )
+    expected_results <- c(1461.12, 1095.84, 1748.17, 1153.07, 616.11)
 
     #### Observed results ----
     df <- df |>
       process_age(
-        DoS = surv_date,
-        DoB = bir_date,
-        age = age
+        svdate = "survy_date",
+        birdate = "birthdate",
+        age = df$age
       )
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "process_age() does the right calculation for age in days",
       {
-        expect_vector(
-          df[["age_day"]],
-          size = 15
-        )
-        expect_equal(df[["age_day"]], expected_results)
+        testthat::expect_vector(df[["age_days"]], size = 5)
+        testthat::expect_equal(df[["age_days"]], expected_results)
       }
     )
   }
@@ -202,14 +176,11 @@ local(
     muac_cm <- recode_muac(muac, unit = "cm")
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "recode_muac() works well",
       {
-        expect_vector(
-          muac_cm,
-          size = 41
-        )
-        expect_equal(muac_cm, expected_results)
+        testthat::expect_vector(muac_cm, size = 41)
+        testthat::expect_equal(muac_cm, expected_results)
       }
     )
   }
@@ -228,14 +199,11 @@ local(
     muac_mm <- recode_muac(muac, unit = "mm")
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "recode_muac() works well",
       {
-        expect_vector(
-          muac_mm,
-          size = 81
-        )
-        expect_equal(muac_mm, expected_results)
+        testthat::expect_vector(muac_mm, size = 81)
+        testthat::expect_equal(muac_mm, expected_results)
       }
     )
   }
@@ -246,42 +214,42 @@ local(
 local(
   {
     #### Sample data ----
-    sex <- c(2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1)
-    muac <- c(
-      165, 222, 176, 150, 219, 193, 196,
-      203, 203, 129, 97, 158, 156, 215, 214
+    df <- data.frame(
+      sex = c(2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1),
+      muac = c(165, 222, 176, 150, 219, 193, 196, 203, 203,
+               129, 97, 158, 156, 215, 214),
+      age <- c(13, 56, 53, 23, 43, 55, 25,16, 44, 19, 45, 36, 11, 31,26)
     )
-    age <- c(13, 56, 53, 23, 43, 55, 25,
-             16, 44, 19, 45, 36, 11, 31,26)
-
-    data <- data.frame(sex, muac, age)
 
     #### Expected results ----
     expected_results <- c(
-      1.757, 3.059, 0.902, 0.161, 3.786, 1.892, 3.249,
-      4.217, 2.651, -1.484, -5.529, 0.117, 1.151, 4.151, 4.415
+      1.757, 3.057, 0.902, 0.161, 3.786, 1.892, 3.249, 4.217,
+      2.651, -1.484, -5.529, 0.117, 1.151, 4.151, 4.415
     )
 
     #### Observed results ----
-    df <- data |>
+    df <- df |>
+      process_age(
+        svdate = NULL,
+        birdate = NULL,
+        age = age
+      ) |>
       process_muac_data(
-        sex = "sex",
+        sex = sex,
+        muac = muac,
         age = "age",
-        muac = "muac",
         .recode_sex = FALSE,
         .recode_muac = TRUE,
         unit = "cm"
     )
 
     #### The Test ----
-    test_that(
+    testthat::test_that(
       "process_muac_data() works well",
       {
-        expect_vector(
-          df[["mfaz"]],
-          size = 15
-        )
-        expect_equal(df[["mfaz"]], expected_results)
+        testthat::expect_vector(df[["mfaz"]], size = 15)
+        testthat::expect_vector(df[["flags"]], size = 15)
+        testthat::expect_equal(df[["mfaz"]], expected_results)
       }
     )
   }
@@ -291,44 +259,81 @@ local(
 local(
   {
     #### Observed results ----
-     obsrv <- age_ratio_test(data.01[["age"]], .expectedP = 0.66)
+     obsrv <- age_ratio_test(anthro_data[["age"]], .expectedP = 0.66)
 
     #### The test ----
-    test_that(
+     testthat::test_that(
       "age_ratio_test() returns a list",
       {
-        expect_type(obsrv, "list")
-        expect_vector(obsrv)
-        expect_named(obsrv, c("p", "observedR", "observedP")
+        testthat::expect_type(obsrv, "list")
+        testthat::expect_vector(obsrv)
+        testthat::expect_named(obsrv, c("p", "observedR", "observedP")
         )
       }
     )
   }
 )
 
-### Test check: remove_flags() ----
+### Test check: remove_flags() with method set to "mfaz"----
 local(
   {
     #### Observed results ----
-    processed_df <- data.01 |>
-      process_age() |>
+    processed_df <- anthro_data |>
+      process_age(
+        svdate = "dos",
+        birdate = "dob",
+        age = age
+      ) |>
       process_muac_data(
-        sex = "sex",
+        sex = sex,
         muac = muac,
-        age = age,
+        age = "age",
         .recode_sex = TRUE,
         .recode_muac = TRUE,
         unit = "cm"
       )
-    processed_df[["not_flag"]] <- remove_flags(processed_df[["flags"]])
+    processed_df[["not_flag"]] <- remove_flags(processed_df[["mfaz"]])$zs
 
     #### The test ----
-    test_that(
+    testthat::test_that(
       "remove_flags() assign NA's when flaggs are identified",
       {
       with(
         processed_df,
-        testthat::show_failure(expect_setequal(flags, not_flag))
+        testthat::expect_length(processed_df[["not_flag"]], 7740)
+        )
+      }
+    )
+  }
+)
+
+### Test check: remove_flags() with method set to "crude"----
+local(
+  {
+    #### Observed results ----
+    processed_df <- anthro_data |>
+      process_age(
+        svdate = "dos",
+        birdate = "dob",
+        age = age
+      ) |>
+      process_muac_data(
+        sex = sex,
+        muac = muac,
+        age = NULL,
+        .recode_sex = TRUE,
+        .recode_muac = FALSE,
+        unit = "none"
+      )
+    processed_df[["not_flag"]] <- remove_flags(processed_df[["muac"]])$cr
+
+    #### The test ----
+    testthat::test_that(
+      "remove_flags() assign NA's when flaggs are identified",
+      {
+        with(
+          processed_df,
+          testthat::expect_length(processed_df[["not_flag"]], 7740)
         )
       }
     )

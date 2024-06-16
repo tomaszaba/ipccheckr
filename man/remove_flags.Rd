@@ -4,10 +4,12 @@
 \alias{remove_flags}
 \title{Remove detected outliers}
 \usage{
-remove_flags(x)
+remove_flags(x, unit = c("zscore", "crude"))
 }
 \arguments{
-\item{x}{A numeric vector containing zscore or crude MUAC values}
+\item{x}{A numeric vector containing zscore or crude MUAC values.}
+
+\item{unit}{A choice of the units to which you wish remove flags on. variable into.}
 }
 \value{
 A vector of same size, with flagged data replaced by \code{NA}s.
