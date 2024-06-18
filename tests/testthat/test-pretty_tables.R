@@ -27,11 +27,11 @@ local(
         testthat::expect_equal(ncol(quality), 9)
         testthat::expect_equal(nrow(quality), 1)
         testthat::expect_true(
-          all(c("n", "Flagged data (%)", "Class. of flagged data",
-                "Sex ratio (p)", "Class. of sex ratio", "DPS (#)",
-                "Class. of DPS", "Standard Dev* (#)", "Class. of standard dev"
-          ) %in% names(quality)
-
+          all(c(
+            "Total children", "Flagged data (%)", "Class. of flagged data",
+            "Sex ratio (p)", "Class. of sex ratio", "DPS(#)", "Class. of DPS",
+            "Standard Dev* (#)", "Class. of standard dev"
+            ) %in% names(quality)
           )
         )
       }
@@ -73,7 +73,7 @@ local(
         testthat::expect_equal(ncol(quality), 18)
         testthat::expect_equal(nrow(quality), 11)
         testthat::expect_true(
-          all(c("area", "n", "Flagged data (%)",
+          all(c("Area", "Total children", "Flagged data (%)",
                 "Class. of flagged data", "Sex ratio (p)", "Class. of sex ratio",
                 "Age ratio (p)", "Class. of age ratio", "DPS (#)",
                 "Class. of DPS", "Standard Dev* (#)", "Class. of standard dev",
@@ -122,7 +122,7 @@ local(
         testthat::expect_equal(ncol(quality), 20)
         testthat::expect_equal(nrow(quality), 11)
         testthat::expect_true(
-          all(c("area", "n", "Flagged data (%)",
+          all(c("Area", "Total children", "Flagged data (%)",
                 "Class. of flagged data", "Sex ratio (p)", "Class. of sex ratio",
                 "Age ratio (p)", "Class. of age ratio", "DPS weight (#)",
                 "Class. DPS weight", "DPS height (#)", "Class. DPS height",

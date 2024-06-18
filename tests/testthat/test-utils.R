@@ -292,7 +292,8 @@ local(
         .recode_muac = TRUE,
         unit = "cm"
       )
-    processed_df[["not_flag"]] <- remove_flags(processed_df[["mfaz"]])$zs
+
+    processed_df[["not_flag"]] <- remove_flags(processed_df[["mfaz"]], unit = "zscore")
 
     #### The test ----
     testthat::test_that(
@@ -325,7 +326,7 @@ local(
         .recode_muac = FALSE,
         unit = "none"
       )
-    processed_df[["not_flag"]] <- remove_flags(processed_df[["muac"]])$cr
+    processed_df[["not_flag"]] <- remove_flags(processed_df[["muac"]], unit = "crude")
 
     #### The test ----
     testthat::test_that(

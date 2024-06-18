@@ -75,23 +75,14 @@ generate_pretty_table_mfaz <- function(df) {
       kurt = round(.data$kurt, digits = 2)
     ) |>
     ## Rename columns ----
-    rename(
-      `Flagged data (%)` = .data$flagged,
-      `Class. of flagged data` = .data$flagged_class,
-      `Sex ratio (p)` = .data$sex_ratio,
-      `Class. of sex ratio` = .data$sex_ratio_class,
-      `Age ratio (p)` = .data$age_ratio,
-      `Class. of age ratio` = .data$age_ratio_class,
-      `DPS (#)` = .data$dps,
-      `Class. of DPS` = .data$dps_class,
-      `Standard Dev* (#)` = .data$sd,
-      `Class. of standard dev` = .data$sd_class,
-      `Skewness* (#)` = .data$skew,
-      `Class. of skewness` = .data$skew_class,
-      `Kurtosis* (#)` = .data$kurt,
-      `Class. of kurtosis` = .data$kurt_class,
-      `Overall score` = .data$quality_score,
-      `Overall quality` = .data$quality_class
+    setNames(
+      c("Area", "Total children", "Flagged data (%)",
+        "Class. of flagged data", "Sex ratio (p)", "Class. of sex ratio",
+        "Age ratio (p)", "Class. of age ratio", "DPS (#)",
+        "Class. of DPS", "Standard Dev* (#)", "Class. of standard dev",
+        "Skewness* (#)", "Class. of skewness", "Kurtosis* (#)",
+        "Class. of kurtosis", "Overall score", "Overall quality"
+      )
     )
   ## Return data frame ----
   df
@@ -123,27 +114,16 @@ generate_pretty_table_whz <- function(df) {
         kurt = round(.data$kurt, digits = 2)
       ) |>
       ## Rename columns ----
-      rename(
-        `Flagged data (%)` = .data$flagged,
-        `Class. of flagged data` = .data$flagged_class,
-        `Sex ratio (p)` = .data$sex_ratio,
-        `Class. of sex ratio` = .data$sex_ratio_class,
-        `Age ratio (p)` = .data$age_ratio,
-        `Class. of age ratio` = .data$age_ratio_class,
-        `DPS weight (#)` = .data$dps_wgt,
-        `Class. DPS weight` = .data$dps_wgt_class,
-        `DPS height (#)` = .data$dps_hgt,
-        `Class. DPS height` = .data$dps_hgt_class,
-        `Standard Dev* (#)` = .data$sd,
-        `Class. of standard dev` = .data$sd_class,
-        `Skewness* (#)` = .data$skew,
-        `Class. of skewness` = .data$skew_class,
-        `Kurtosis* (#)` = .data$kurt,
-        `Class. of kurtosis` = .data$kurt_class,
-        `Overall score` = .data$quality_score,
-        `Overall quality` = .data$quality_class
+    setNames(
+      c("Area", "Total children", "Flagged data (%)", "Class. of flagged data",
+        "Sex ratio (p)", "Class. of sex ratio", "Age ratio (p)",
+        "Class. of age ratio", "DPS weight (#)", "Class. DPS weight",
+        "DPS height (#)", "Class. DPS height", "Standard Dev* (#)",
+        "Class. of standard dev", "Skewness* (#)", "Class. of skewness",
+        "Kurtosis* (#)", "Class. of kurtosis", "Overall score", "Overall quality"
       )
-    ## Return data frame ----
+    )
+  ## Return data frame ----
   df
 }
 
@@ -166,17 +146,11 @@ generate_pretty_table_muac <- function(df) {
         dps = round(.data$dps)
       ) |>
       ## Rename columns ----
-      rename(
-        `Flagged data (%)` = .data$flagged,
-        `Class. of flagged data` = .data$flagged_class,
-        `Sex ratio (p)` = .data$sex_ratio,
-        `Class. of sex ratio` = .data$sex_ratio_class,
-        `DPS (#)` = .data$dps,
-        `Class. of DPS` = .data$dps_class,
-        `Standard Dev* (#)` = .data$sd,
-        `Class. of standard dev` = .data$sd_class
-      )
-
+    setNames(
+      c("Total children", "Flagged data (%)", "Class. of flagged data", "Sex ratio (p)",
+        "Class. of sex ratio", "DPS(#)", "Class. of DPS", "Standard Dev* (#)",
+        "Class. of standard dev")
+    )
     ## Return data frame ----
     df
 }

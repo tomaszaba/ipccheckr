@@ -43,7 +43,9 @@ respective classification.
 \code{check_plausibility_mfaz()}, \code{check_plausibility_whz()} and
 \code{check_plausibility_muac()} lets you know the quality of your data, based on
 the statistics around MUAC-for-age zscores, weight-for-height z-scores and on
-crude MUAC, respectively.
+crude MUAC, respectively. Note that \code{check_plausibility_whz()} is all about
+WHZ only. If you wish to know about MUAC checks consider using either
+\code{check_plausibility_mfaz()} or \code{check_plausibility_muac()}
 }
 \examples{
 
