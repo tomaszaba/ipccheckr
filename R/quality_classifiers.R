@@ -194,7 +194,7 @@ classify_skew_kurt <- function(sk) {
     breaks = c(-Inf, 0.2, 0.4, 0.6, Inf),
     labels = c("Excellent", "Good", "Acceptable", "Problematic"),
     include.lowest = FALSE,
-    right = TRUE
+    right = FALSE
   )
 }
 

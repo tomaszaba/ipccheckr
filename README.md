@@ -89,24 +89,24 @@ The proposed `ipccheckr` workflow is presented below:
 
 # Citation
 
-If you find `ipccheckr` package useful, please cite using the suggested
-citation provided by a call to `citation` function as follows:
+If you were enticed to using `ipccheckr` package and found it useful,
+please cite using the suggested citation provided by a call to
+`citation` function as follows:
 
 ``` r
 citation("ipccheckr")
-#> Warning in citation("ipccheckr"): could not determine year for 'ipccheckr' from
-#> package DESCRIPTION file
 #> To cite package 'ipccheckr' in publications use:
 #> 
-#>   Zaba T, Guevarra E (????). _ipccheckr: Toolkit for Performing IPC
-#>   Acute Malnutrition-related Data Checks_. R package version
-#>   0.0.0.9000, <https://github.com/tomaszaba/ipccheckr>.
+#>   Tomás Zaba, Ernest Guevarra (2024). _ipccheckr: Toolkit for
+#>   Performing IPC Acute Malnutrition-related Data Checks_. R package
+#>   version 0.0.0.9000, <https://github.com/tomaszaba/ipccheckr>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {ipccheckr: Toolkit for Performing IPC Acute Malnutrition-related Data Checks},
-#>     author = {Tomás Zaba and Ernest Guevarra},
+#>     author = {{Tomás Zaba} and {Ernest Guevarra}},
+#>     year = {2024},
 #>     note = {R package version 0.0.0.9000},
 #>     url = {https://github.com/tomaszaba/ipccheckr},
 #>   }

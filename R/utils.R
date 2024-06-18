@@ -169,20 +169,25 @@ process_age <- function(df, svdate = NULL, birdate = NULL, age) {
 #' @returns A transformed vector into the unit you wish to have.
 #'
 recode_muac <- function(muac, unit = c("cm", "mm")) {
+
+  ## Check if unit's arguments match ----
   stopifnot(unit %in% c("cm", "mm"))
 
-  switch(unit,
-         "mm" = {
-           muac <- muac * 10
-           cat("Recoding muac values to millimeters\n")
-           return(muac)
-         },
-         "cm" = {
-           muac <- muac / 10
-           cat("Recoding values to centimeters\n")
-           return(muac)
-         },
-         stop("Invalid 'units' argument. Please choose either 'cm' or 'mm'.")
+  ## Recode muac conditionally ----
+  switch(
+    unit,
+
+    ### Recode to millimeters ----
+    "mm" = {
+      muac <- muac * 10
+      },
+
+    ### Recode to centimeters ----
+    "cm" = {
+      muac <- muac / 10
+      },
+
+    stop("Invalid 'units' argument. Please choose either 'cm' or 'mm'.")
   )
 }
 
@@ -418,7 +423,7 @@ age_ratio_test <- function(age, .expectedP = 0.66) {
   total <- sum(table(na.omit(x)))
   ratio <- sum_o24 / sum_u24
   prop <- sum_o24 / total
-  test <- prop.test(sum_o24, total, p = .expectedP)
+  test <- prop.test(sum_o24, total, p = .expectedP, correct = FALSE)
 
     list(
       p = test$p.value,
@@ -442,14 +447,20 @@ age_ratio_test <- function(age, .expectedP = 0.66) {
 #'
 remove_flags <- function(x, unit = c("zscore", "crude")) {
 
+  ## Match arguments ----
   unit <- match.arg(unit)
 
-  mean_x <- mean(x, na.rm = TRUE)
-  zs <- ifelse((x < (mean_x - 3) | x > (mean_x + 3)) | is.na(x), NA_real_, x)
-  cr <- ifelse(x < 100 | x > 200 | is.na(x), NA_integer_, x)
-
-  list(
-    zs = zs,
-    cr = cr
+  ## Control flow based on unit ----
+  switch(
+    unit,
+    ### Remove flags when unit = "zscore" ----
+    "zscore" = {
+      mean_x <- mean(x, na.rm = TRUE)
+      zs <- ifelse((x < (mean_x - 3) | x > (mean_x + 3)) | is.na(x), NA_real_, x)
+    },
+    ### Remove flags when unit = "crude" ----
+    "crude" = {
+      cr <- ifelse(x < 100 | x > 200 | is.na(x), NA_integer_, x)
+    }
   )
 }

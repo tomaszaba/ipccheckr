@@ -5,7 +5,9 @@
 #' `check_plausibility_mfaz()`, `check_plausibility_whz()` and
 #' `check_plausibility_muac()` lets you know the quality of your data, based on
 #' the statistics around MUAC-for-age zscores, weight-for-height z-scores and on
-#' crude MUAC, respectively.
+#' crude MUAC, respectively. Note that `check_plausibility_whz()` is all about
+#' WHZ only. If you wish to know about MUAC checks consider using either
+#' `check_plausibility_mfaz()` or `check_plausibility_muac()`
 #'
 #' @param df A data frame object returned by [process_muac_data()] for
 #' `check_plausibility_mfaz()` and `check_plausibility_muac()` and returned by
@@ -117,11 +119,11 @@ check_plausibility_mfaz <- function(df, sex, muac, age, flags, area) {
       age_ratio_class = classify_age_sex_ratio(.data$age_ratio),
       dps = digitPreference({{ muac }}, digits = 1, values = 0:9)$dps,
       dps_class = digitPreference({{ muac }}, digits = 1, values = 0:9)$dpsClass,
-      sd = remove_flags(sd(.data$mfaz, na.rm = TRUE))$zs,
+      sd = sd(remove_flags(.data$mfaz, unit = "zscore"), na.rm = TRUE),
       sd_class = classify_sd(.data$sd, type = "zscore"),
-      skew = remove_flags(skewKurt(.data$mfaz)$s)$zs,
+      skew = skewKurt(remove_flags(.data$mfaz, unit = "zscore"))$s,
       skew_class = classify_skew_kurt(.data$skew),
-      kurt = remove_flags(skewKurt(.data$mfaz)$k)$zs,
+      kurt = skewKurt(remove_flags(.data$mfaz, unit = "zscore"))$k,
       kurt_class = classify_skew_kurt(.data$kurt),
       .groups = "drop"
     )
@@ -167,11 +169,11 @@ check_plausibility_whz <- function(df, sex, age, weight, height, flags, area) {
       dps_wgt_class = digitPreference({{ weight }}, digits = 1)$dpsClass,
       dps_hgt = digitPreference({{ height }}, digits = 1)$dps,
       dps_hgt_class = digitPreference({{ height }}, digits = 1)$dpsClass,
-      sd = remove_flags(sd(.data$wfhz, na.rm = TRUE))$zs,
+      sd = sd(remove_flags(.data$wfhz, unit = "zscore"), na.rm = TRUE),
       sd_class = classify_sd(.data$sd, type = "zscore"),
-      skew = remove_flags(skewKurt(.data$wfhz)$s)$zs,
+      skew = skewKurt(remove_flags(.data$wfhz, unit = "zscore"))$s,
       skew_class = classify_skew_kurt(.data$skew),
-      kurt = remove_flags(skewKurt(.data$wfhz)$k)$zs,
+      kurt = skewKurt(remove_flags(.data$wfhz, unit = "zscore"))$k,
       kurt_class = classify_skew_kurt(.data$kurt),
       .groups = "drop"
     )
@@ -211,7 +213,7 @@ check_plausibility_muac <- function(df, flags, sex, muac) {
       sex_ratio_class = classify_age_sex_ratio(.data$sex_ratio),
       dps = digitPreference({{ muac }}, digits = 0, values = 0:9)[["dps"]],
       dps_class = digitPreference({{ muac }}, digits = 0, values = 0:9)[["dpsClass"]],
-      sd = remove_flags(sd({{ muac }}, na.rm = TRUE))$cr,
+      sd = sd(remove_flags({{ muac }}, unit = "crude"), na.rm = TRUE),
       sd_class = classify_sd(.data$sd, type = "crude"),
       .groups = "drop"
     )

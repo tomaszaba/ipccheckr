@@ -9,6 +9,7 @@
 #' @importFrom rlang sym
 #' @importFrom scales label_percent label_pvalue
 #' @importFrom stats na.omit prop.test sd
+#' @importFrom stats setNames
 #' @importFrom zscorer addWGSR
 ## usethis namespace: end
 NULL
