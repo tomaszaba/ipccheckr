@@ -25,3 +25,26 @@
 #' anthro_data
 #'
 "anthro_data"
+
+#'
+#' District level representative survey data with zscores calculated
+#'
+#' @format A data frame with 10 columns and 7740 rows
+#'
+#' |**Variable** | **Description** |
+#' | :--- | :---|
+#' | *area* | Location where the survey took place |
+#' | *cluster* | Primary sampling unit |
+#' | *sex* | Sex, "m" = boys, "f" = girls |
+#' | *age* | calculated age in months with two decimal places |
+#' | *edema* | Edema, "n" = no, "y" = yes |
+#' | *muac* | Mid-upper arm circumference (mm) |
+#' | *wfhz* | Weight-for-height z-scores with 3 decimal places |
+#' | *flag_wfhz* | Flagged observations. 1=flagged, 0=not flagged |
+#' | *mfaz* | MUAC-for-age z-scores with 3 decimal places |
+#' | *flag_mfaz* | Flagged observations: 1=flagged, 0=not flagged |
+#'
+#' @examples
+#' prev_data
+#'
+"prev_data"
