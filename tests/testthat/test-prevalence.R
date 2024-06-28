@@ -66,3 +66,102 @@ local(
     )
   }
 )
+
+### Test check: apply_CDC_age_weighting() ----
+#### Edema set to !NULL ----
+
+local({
+  #### Input data ----
+  x <- muac_data |>
+    process_age(age = months) |>
+    process_muac_data(
+      sex = sex,
+      muac = muac,
+      age = "months",
+      .recode_sex = TRUE,
+      .recode_muac = TRUE,
+      unit = "cm"
+    ) |>
+    subset(flags == 0) |>
+    dplyr::mutate(muac = recode_muac(muac, unit = "mm"))
+
+
+  #### Expected results calculated in the CDC/SMART MUAC tool ----
+  expect_sam <- 0.023
+  expect_mam <- 0.069
+
+  #### Observed results ----
+  obs_sam <- with(x,
+                  apply_CDC_age_weighting(
+                    muac = muac,
+                    edema = edema,
+                    age = months,
+                    status = "sam")
+  )
+  obs_mam <- with(x,
+                  apply_CDC_age_weighting(
+                    muac = muac,
+                    edema = edema,
+                    age = months,
+                    status = "mam")
+  )
+
+  #### The test ----
+  testthat::test_that(
+    "apply_CDC_age_weighting() works amazing",
+    {
+      testthat::expect_vector(obs_sam, size = 1)
+      testthat::expect_vector(obs_mam, size = 1)
+      testthat::expect_equal(round(obs_sam, 2), round(expect_sam, 2))
+      testthat::expect_equal(round(obs_mam, 2), round(expect_mam, 2))
+    }
+  )
+})
+
+### Edema set to NULL ----
+local({
+  #### Input data ----
+  x <- muac_data |>
+    process_age(age = months) |>
+    process_muac_data(
+      sex = sex,
+      muac = muac,
+      age = "months",
+      .recode_sex = TRUE,
+      .recode_muac = TRUE,
+      unit = "cm"
+    ) |>
+    subset(flags == 0) |>
+    dplyr::mutate(
+      muac = recode_muac(muac, unit = "mm"))
+
+
+  #### Expected results calculated in the CDC/SMART MUAC tool ----
+  expect_sam <- 0.013
+  expect_mam <- 0.071
+
+  #### Observed results ----
+  obs_sam <- with(x,
+                  apply_CDC_age_weighting(
+                    muac = muac,
+                    age = months,
+                    status = "sam")
+  )
+  obs_mam <- with(x,
+                  apply_CDC_age_weighting(
+                    muac = muac,
+                    age = months,
+                    status = "mam")
+  )
+
+  #### The test ----
+  testthat::test_that(
+    "apply_CDC_age_weighting() works amazing",
+    {
+      testthat::expect_vector(obs_sam, size = 1)
+      testthat::expect_vector(obs_mam, size = 1)
+      testthat::expect_equal(round(obs_sam, 2), round(expect_sam, 2))
+      testthat::expect_equal(round(obs_mam, 2), round(expect_mam, 2))
+    }
+  )
+})

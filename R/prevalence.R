@@ -1,3 +1,4 @@
+# Function to add new vectors with case definitions ----------------------------
 #'
 #' Add acute malnutrition case-definitions to the data frame
 #'
@@ -69,26 +70,35 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
   )
 }
 
+# The CDC analysis approach ----------------------------------------------------
+
 #'
 #'
-# get_prevalence_estimates <- function(df, base = c("wfhz", "muac", "comb")) {
-#   ## Match arguments ----
-#   base <- match.arg(base)
-#
-#   ## Execute code conditionally ----
-#   switch(base,
-#     "wfhz" = {
-#       ### Check standard deviation ----
-#       x <- df |>
-#         summarise(std = sd(remove_flags(.data$wfhz, "zscore"), na.rm = TRUE))
-#       ### Check if standard deviation > 1.2 ----
-#       if (x[["std"]] > 1.2) {
-#         ### Normalize zscores to have mean = 0 and standard deviation = 1 ----
-#         x <- summarise(mean = mean(.data$wfhz, na.rm = TRUE))
-#         y <- summarise(std = sd(remove_flags(.data$wfhz, "zscore"), na.rm = TRUE))
-#         for i in df$wfhz
-#
-#       }
-#     }
-#   )
-# }
+apply_CDC_age_weighting <- function(muac, age,
+                                    edema = NULL, status = c("sam", "mam")) {
+
+  ## Match arguments ----
+  status <- match.arg(status)
+
+  if (!is.null(edema)) {
+    ### Define cases ----
+    nut_status <- classify_wasting(muac, edema)
+
+    ### Compute age weighted prevalence ----
+    age_group <- ifelse(age < 24, "under_2", "over_2")
+    nut_U2 <- ifelse(age_group == "under_2" & nut_status == status, 1, 0)
+    nut_O2 <- ifelse(age_group == "over_2" & nut_status == status, 1, 0)
+    w_prev <- mean(nut_U2, na.rm = TRUE) + (2 * mean(nut_O2, na.rm = TRUE)) / 3
+
+  } else {
+    ### Define cases ----
+    nut_status <- classify_wasting(muac)
+
+    ### Compute age weighted prevalence ----
+    age_group <- ifelse(age < 24, "under_2", "over_2")
+    nut_U2 <- ifelse(age_group == "under_2" & nut_status == status, 1, 0)
+    nut_O2 <- ifelse(age_group == "over_2" & nut_status == status, 1, 0)
+    w_prev <- mean(nut_U2, na.rm = TRUE) + (2 * mean(nut_O2, na.rm = TRUE)) / 3
+  }
+  w_prev
+}

@@ -1,3 +1,4 @@
+# Function to detect outliers --------------------------------------------------
 
 #'
 #' Remove detected outliers
@@ -31,6 +32,8 @@ remove_flags <- function(x, unit = c("zscore", "crude")) {
     }
   )
 }
+
+# Function on acute malnutrition case-definition -------------------------------
 
 #'
 #' Case-Definition: is an observation acutely malnourished?
@@ -154,6 +157,8 @@ wasting_cases_combined <- function(zscore, muac, edema = NULL,
   }
 }
 
+# Function to normalize/standardize scores -------------------------------------
+
 #'
 #' Normalize Zscores to follow a normal distribution
 #'
@@ -188,4 +193,63 @@ normalize_zscore <- function(x) {
     norm_x[i] <- (x[i] - mean_x) / std_x
   }
   norm_x
+}
+
+# Function to identify the type of treatment for prevalence --------------------
+#'
+#' A helper function to tell how to go about MUAC prevalence analysis based on
+#' on the output of age ratio and standard deviation test results
+#'
+#' @param age_ratio_class,sd_class Character vectors storing age ratio's p-values
+#' and standard deviation's classification, respectively.
+#'
+#' @returns A character vector of the same length containing the indication of
+#' what to do for the MUAC prevalence analysis: "weighted", "unweighted" and
+#' "missing". If "weighted", the CDC weighting approach is applied to correct for
+#' age bias. If "unweighted" a normal complex sample analysis is applied, and for
+#' the latter, NA are thrown.
+#'
+#'
+tell_muac_analysis_strategy <- function(age_ratio_class, sd_class) {
+  case_when(
+    age_ratio_class == "Problematic" & sd_class != "Problematic" ~ "weighted",
+    age_ratio_class != "Problematic" & sd_class == "Problematic" ~ "missing",
+    age_ratio_class == "Problematic" & sd_class == "Problematic" ~ "missing",
+    .default = "unweighted"
+  )
+}
+
+# Function to classify nutritional status --------------------------------------
+
+#'
+#' A helper function to classify nutritional status
+#'
+#' `classify_wasting()` is used a helper inside [apply_CDC_age_weighting()] to
+#' classify nutritional status into "sam", "mam" or "not wasted" and then the
+#' vector returned is used downstream to calculate the proportions of children
+#' with severe and moderate acute malnutrition.
+#'
+#' @param muac An integer vector containing MUAC values. They should be in
+#' millimeters.
+#'
+#' @param edema Optional. Its a vector containing data on billateral pitting
+#' edema coded as "y" for yes and "n" for no.
+#'
+#'
+classify_wasting <- function(muac, edema = NULL) {
+  if (!is.null(edema)) {
+    #edema <- ifelse(edema == 1, "y", "n")
+    x <- case_when(
+      muac < 115 | edema == "y" ~ "sam",
+      muac >= 115 & muac < 125 & edema == "n" ~ "mam",
+      .default = "not wasted"
+    )
+  } else {
+    x <- case_when(
+      muac < 115 ~ "sam",
+      muac >= 115 & muac < 125 ~ "mam",
+      .default = "not wasted"
+    )
+  }
+  x
 }

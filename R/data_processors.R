@@ -95,17 +95,10 @@ recode_muac <- function(muac, unit = c("cm", "mm")) {
   ## Recode muac conditionally ----
   switch(
     unit,
-
     ### Recode to millimeters ----
-    "mm" = {
-      muac <- muac * 10
-    },
-
+    "mm" = {muac <- muac * 10},
     ### Recode to centimeters ----
-    "cm" = {
-      muac <- muac / 10
-    },
-
+    "cm" = {muac <- muac / 10},
     stop("Invalid 'units' argument. Please choose either 'cm' or 'mm'.")
   )
 }
