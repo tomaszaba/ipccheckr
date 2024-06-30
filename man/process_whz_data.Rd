@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_processors.R
 \name{process_whz_data}
 \alias{process_whz_data}
-\title{Process Weight-for-Height data}
+\title{Process Weight-for-Height data get it ready for analyses}
 \usage{
 process_whz_data(df, sex, weight, height, .recode_sex = TRUE)
 }

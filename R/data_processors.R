@@ -1,3 +1,5 @@
+# Function to detect outliers --------------------------------------------------
+
 #'
 #' Identify and flag outliers in WHZ, MFAZ, and crude MUAC datasets
 #'
@@ -54,6 +56,43 @@ flag_outliers <- function(x, type = c("zscore", "crude")) {
   }
 }
 
+# Function to remove detected outliers -----------------------------------------
+
+#'
+#' Remove detected outliers
+#'
+#' `remove_flags()` removes flags detected by [flag_outliers()]. It helps you
+#' compute your statistics when flags needs to be removed, such as in standard
+#' deviation.
+#'
+#' @param x A numeric vector containing zscore or crude MUAC values.
+#'
+#' @param unit A choice of the units to which you wish remove flags on. variable into.
+#'
+#' @returns A vector of same size, with flagged data replaced by `NA`s.
+#'
+remove_flags <- function(x, unit = c("zscore", "crude")) {
+
+  ## Match arguments ----
+  unit <- match.arg(unit)
+
+  ## Control flow based on unit ----
+  switch(
+    unit,
+    ### Remove flags when unit = "zscore" ----
+    "zscore" = {
+      mean_x <- mean(x, na.rm = TRUE)
+      zs <- ifelse((x < (mean_x - 3) | x > (mean_x + 3)) | is.na(x), NA_real_, x)
+    },
+    ### Remove flags when unit = "crude" ----
+    "crude" = {
+      cr <- ifelse(x < 100 | x > 200 | is.na(x), NA_integer_, x)
+    }
+  )
+}
+
+
+# Function to recode MUAC variables into desired units -------------------------
 
 #'
 #' Recode crude MUAC variable into either centimeters or millimeters
@@ -95,23 +134,19 @@ recode_muac <- function(muac, unit = c("cm", "mm")) {
   ## Recode muac conditionally ----
   switch(
     unit,
-
     ### Recode to millimeters ----
-    "mm" = {
-      muac <- muac * 10
-    },
-
+    "mm" = {muac <- muac * 10},
     ### Recode to centimeters ----
-    "cm" = {
-      muac <- muac / 10
-    },
-
+    "cm" = {muac <- muac / 10},
     stop("Invalid 'units' argument. Please choose either 'cm' or 'mm'.")
   )
 }
 
+
+# Function to process MUAC data ------------------------------------------------
+
 #'
-#' Process MUAC data
+#' Process MUAC data a get it ready for analyses
 #'
 #' `process_muac_data()` gets your input data ready for downstream MUAC related
 #' analysis.
@@ -226,11 +261,14 @@ process_muac_data <- function(df,
         flags = do.call(flag_outliers, list({{ muac }}, type = "crude"))
       )
   }
-  df
+  dplyr::as_tibble(df)
 }
 
+
+# Function to process Weight-for-height data -----------------------------------
+
 #'
-#' Process Weight-for-Height data
+#' Process Weight-for-Height data get it ready for analyses
 #'
 #' `process_whz_data()` gets your input data ready for downstream WHZ related
 #' analysis.
@@ -290,5 +328,5 @@ process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
     mutate(
       flags = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
     )
-  df
+  dplyr::as_tibble(df)
 }

@@ -48,3 +48,21 @@
 #' prev_data
 #'
 "prev_data"
+
+# MUAC screening data ----------------------------------------------------------
+#'
+#' A MUAC screening data from an anonymized setting
+#'
+#' @format A data frame with 4 columns and 661 rows
+#'
+#' |**Variable** | **Description** |
+#' | :--- | :---|
+#' | *sex* | Sex, "m" = boys, "f" = girls |
+#' | *months* | calculated age in months with two decimal places |
+#' | *edema* | Edema, "n" = no, "y" = yes |
+#' | *muac* | Mid-upper arm circumference (mm) |
+#'
+#' @examples
+#' muac_data
+#'
+"muac_data"
