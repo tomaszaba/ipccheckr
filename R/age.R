@@ -92,7 +92,7 @@ process_age <- function(df, svdate = NULL, birdate = NULL, age) {
         age_days = round({{ age }} * 30.44, 2)
       )
   }
-  df
+  dplyr::as_tibble(df)
 }
 
 #'

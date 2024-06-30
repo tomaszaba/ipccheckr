@@ -29,7 +29,9 @@ Imports:
     nipnTK,
     rlang,
     scales,
+    srvyr,
     stats,
+    tidyr,
     zscorer
 Suggests: 
     spelling,

@@ -1,70 +1,6 @@
-# Test checks for utils --------------------------------------------------------
+# Test checks for prevalence helpers used in complex sample based prevalence ---
 
-## Test check: remove_flags() -----
-### Test check: remove_flags() with method set to "mfaz"----
-local({
-  #### Observed results ----
-  processed_df <- anthro_data |>
-    process_age(
-      svdate = "dos",
-      birdate = "dob",
-      age = age
-    ) |>
-    process_muac_data(
-      sex = sex,
-      muac = muac,
-      age = "age",
-      .recode_sex = TRUE,
-      .recode_muac = TRUE,
-      unit = "cm"
-    )
-
-  processed_df[["not_flag"]] <- remove_flags(processed_df[["mfaz"]], unit = "zscore")
-
-  #### The test ----
-  testthat::test_that(
-    "remove_flags() assign NA's when flaggs are identified",
-    {
-      with(
-        processed_df,
-        testthat::expect_length(processed_df[["not_flag"]], 7740)
-      )
-    }
-  )
-})
-
-### Test check: remove_flags() with method set to "crude"----
-local({
-  #### Observed results ----
-  processed_df <- anthro_data |>
-    process_age(
-      svdate = "dos",
-      birdate = "dob",
-      age = age
-    ) |>
-    process_muac_data(
-      sex = sex,
-      muac = muac,
-      age = NULL,
-      .recode_sex = TRUE,
-      .recode_muac = FALSE,
-      unit = "none"
-    )
-  processed_df[["not_flag"]] <- remove_flags(processed_df[["muac"]], unit = "crude")
-
-  #### The test ----
-  testthat::test_that(
-    "remove_flags() assign NA's when flaggs are identified",
-    {
-      with(
-        processed_df,
-        testthat::expect_length(processed_df[["not_flag"]], 7740)
-      )
-    }
-  )
-})
-
-## Test check: wasting_cases_muac() ----
+## Test check: define_wasting_cases_muac() ----
 ### With edema set to NULL
 local({
   #### Sample data ----
@@ -79,13 +15,13 @@ local({
   expected_mam <- c(1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1)
 
   #### Observed results ----
-  observed_gam <- wasting_cases_muac(muac_values, cases = "gam")
-  observed_sam <- wasting_cases_muac(muac_values, cases = "sam")
-  observed_mam <- wasting_cases_muac(muac_values, cases = "mam")
+  observed_gam <- define_wasting_cases_muac(muac_values, cases = "gam")
+  observed_sam <- define_wasting_cases_muac(muac_values, cases = "sam")
+  observed_mam <- define_wasting_cases_muac(muac_values, cases = "mam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_muac() defines cases properly",
+    "define_wasting_cases_muac() defines cases properly",
     {
       testthat::expect_equal(observed_gam, expected_gam)
       testthat::expect_equal(observed_sam, expected_sam)
@@ -94,7 +30,7 @@ local({
   )
 })
 
-## Test check: wasting_cases_muac() ----
+## Test check: define_wasting_cases_muac() ----
 ### With edema ----
 local({
   #### Sample data ----
@@ -114,13 +50,13 @@ local({
   expected_mam <- c(1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1)
 
   #### Observed results ----
-  observed_gam <- wasting_cases_muac(muac_values, edema, cases = "gam")
-  observed_sam <- wasting_cases_muac(muac_values, edema, cases = "sam")
-  observed_mam <- wasting_cases_muac(muac_values, edema, cases = "mam")
+  observed_gam <- define_wasting_cases_muac(muac_values, edema, cases = "gam")
+  observed_sam <- define_wasting_cases_muac(muac_values, edema, cases = "sam")
+  observed_mam <- define_wasting_cases_muac(muac_values, edema, cases = "mam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_muac() defines cases properly",
+    "define_wasting_cases_muac() defines cases properly",
     {
       testthat::expect_equal(observed_gam, expected_gam)
       testthat::expect_equal(observed_sam, expected_sam)
@@ -128,7 +64,7 @@ local({
     }
   )
 })
-## Test check: wasting_cases_whz() ----
+## Test check: define_wasting_cases_whz() ----
 ### With edema ----
 local({
   #### Sample data ----
@@ -148,13 +84,13 @@ local({
   expected_mam <- c(0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0)
 
   #### Observed results ----
-  observed_gam <- wasting_cases_whz(whz, edema, cases = "gam")
-  observed_sam <- wasting_cases_whz(whz, edema, cases = "sam")
-  observed_mam <- wasting_cases_whz(whz, edema, cases = "mam")
+  observed_gam <- define_wasting_cases_whz(whz, edema, cases = "gam")
+  observed_sam <- define_wasting_cases_whz(whz, edema, cases = "sam")
+  observed_mam <- define_wasting_cases_whz(whz, edema, cases = "mam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_whz() defines cases properly",
+    "define_wasting_cases_whz() defines cases properly",
     {
       testthat::expect_equal(observed_gam, expected_gam)
       testthat::expect_equal(observed_sam, expected_sam)
@@ -163,7 +99,7 @@ local({
   )
 })
 
-## Test check: wasting_cases_whz() ----
+## Test check: define_wasting_cases_whz() ----
 ### With edema set to NULL ----
 local({
   #### Sample data ----
@@ -181,13 +117,13 @@ local({
   expected_mam <- c(0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0)
 
   #### Observed results ----
-  observed_gam <- wasting_cases_whz(whz, edema, cases = "gam")
-  observed_sam <- wasting_cases_whz(whz, edema, cases = "sam")
-  observed_mam <- wasting_cases_whz(whz, edema, cases = "mam")
+  observed_gam <- define_wasting_cases_whz(whz, edema, cases = "gam")
+  observed_sam <- define_wasting_cases_whz(whz, edema, cases = "sam")
+  observed_mam <- define_wasting_cases_whz(whz, edema, cases = "mam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_whz() defines cases properly",
+    "define_wasting_cases_whz() defines cases properly",
     {
       testthat::expect_equal(observed_gam, expected_gam)
       testthat::expect_equal(observed_sam, expected_sam)
@@ -196,7 +132,7 @@ local({
   )
 })
 
-## Test check: wasting_cases_combined() ----
+## Test check: define_wasting_cases_combined() ----
 ### With edema ----
 
 local({
@@ -221,13 +157,13 @@ local({
   expected_cmam <- c(1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1)
 
   #### Observed results ----
-  observed_cgam <- wasting_cases_combined(whz, muac_values, edema, cases = "cgam")
-  observed_csam <- wasting_cases_combined(whz, muac_values, edema, cases = "csam")
-  observed_cmam <- wasting_cases_combined(whz, muac_values, edema, cases = "cmam")
+  observed_cgam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "cgam")
+  observed_csam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "csam")
+  observed_cmam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "cmam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_combined() defines cases properly",
+    "define_wasting_cases_combined() defines cases properly",
     {
       testthat::expect_equal(observed_cgam, expected_cgam)
       testthat::expect_equal(observed_csam, expected_csam)
@@ -257,13 +193,13 @@ local({
   expected_cmam <- c(1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1)
 
   #### Observed results ----
-  observed_cgam <- wasting_cases_combined(whz, muac_values, edema, cases = "cgam")
-  observed_csam <- wasting_cases_combined(whz, muac_values, edema, cases = "csam")
-  observed_cmam <- wasting_cases_combined(whz, muac_values, edema, cases = "cmam")
+  observed_cgam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "cgam")
+  observed_csam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "csam")
+  observed_cmam <- define_wasting_cases_combined(whz, muac_values, edema, cases = "cmam")
 
   #### The test ----
   testthat::test_that(
-    "wasting_cases_combined() defines cases properly",
+    "define_wasting_cases_combined() defines cases properly",
     {
       testthat::expect_equal(observed_cgam, expected_cgam)
       testthat::expect_equal(observed_csam, expected_csam)
@@ -331,64 +267,70 @@ local({
   )
 })
 
-### Test check: classify_wasting() with edema available ----
 
-local({
-  #### Input data ----
-  muac_values <- c(
-    123, 129, 126, 113, 130, 122, 112, 124, 128,
-    121, 120, 110, 114, 125, 119, 127, 117, 118, 111, 115
-  )
-  edema <- c(
-    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0
-  )
+## Test check: define_wasting() ----
+### Type set to "wfhz" ----
+local(
+  {
+    #### Input data ----
+    x <- prev_data |>
+      define_wasting(wfhz, edema, base = "wfhz") |>
+      dplyr::select(gam, sam, mam)
 
-  #### Expected results ----
-  expected <- c(
-    "mam", "not wasted", "sam", "sam", "not wasted", "mam", "sam", "mam",
-    "not wasted", "mam", "mam", "sam", "sam", "not wasted", "mam", "not wasted",
-    "mam", "sam", "sam", "mam"
-  )
+    #### The test ----
+    testthat::test_that(
+      "define_wasting() executes job as expected",
+      {
+        testthat::expect_s3_class(x, "data.frame")
+        testthat::expect_named(x, c("gam", "sam", "mam"))
+        testthat::expect_vector(x$gam, size = 7740)
+        testthat::expect_vector(x$sam, size = 7740)
+        testthat::expect_vector(x$mam, size = 7740)
+      }
+    )
+  }
+)
 
-  #### Observed results ----
-  obs <- classify_wasting(muac = muac_values, edema = edema)
+#### Type set to "muac ----
+local(
+  {
+    #### Input data ----
+    x <- prev_data |>
+      define_wasting(muac = muac, edema = edema, base = "muac") |>
+      dplyr::select(gam, sam, mam)
 
-  #### The test ----
-  testthat::test_that(
-    "classify_wasting() does his job well",
-    {
-      testthat::expect_vector(obs, ptype = "character", size = 20)
-      testthat::expect_equal(obs, expected)
-    }
-  )
-})
+    #### The test ----
+    testthat::test_that(
+      "define_wasting() executes job as expected",
+      {
+        testthat::expect_s3_class(x, "data.frame")
+        testthat::expect_named(x, c("gam", "sam", "mam"))
+        testthat::expect_vector(x$gam, size = 7740)
+        testthat::expect_vector(x$sam, size = 7740)
+        testthat::expect_vector(x$mam, size = 7740)
+      }
+    )
+  }
+)
 
-### Test check: classify_wasting() with edema set to NULL ----
+#### Type set to "combined" ----
+local(
+  {
+    #### Input data ----
+    x <- prev_data |>
+      define_wasting(wfhz, muac, edema, base = "combined") |>
+      dplyr::select(cgam, csam, cmam)
 
-local({
-  #### Input data ----
-  muac_values <- c(
-    123, 129, 126, 113, 130, 122, 112, 124, 128,
-    121, 120, 110, 114, 125, 119, 127, 117, 118, 111, 115
-  )
-  edema <- NULL
-
-  #### Expected results ----
-  expected <- c(
-    "mam", "not wasted", "not wasted", "sam", "not wasted", "mam", "sam", "mam",
-    "not wasted", "mam", "mam", "sam", "sam", "not wasted", "mam", "not wasted",
-    "mam", "mam", "sam", "mam"
-  )
-
-  #### Observed results ----
-  obs <- classify_wasting(muac = muac_values, edema = edema)
-
-  #### The test ----
-  testthat::test_that(
-    "classify_wasting() does his job well",
-    {
-      testthat::expect_vector(obs, ptype = "character", size = 20)
-      testthat::expect_equal(obs, expected)
-    }
-  )
-})
+    #### The test ----
+    testthat::test_that(
+      "define_wasting() executes job as expected",
+      {
+        testthat::expect_s3_class(x, "data.frame")
+        testthat::expect_named(x, c("cgam", "csam", "cmam"))
+        testthat::expect_vector(x$cgam, size = 7740)
+        testthat::expect_vector(x$csam, size = 7740)
+        testthat::expect_vector(x$cmam, size = 7740)
+      }
+    )
+  }
+)

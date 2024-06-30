@@ -55,6 +55,69 @@ local(
   }
 )
 
+## Test check: remove_flags() -----
+### Test check: remove_flags() with method set to "mfaz"----
+local({
+  #### Observed results ----
+  processed_df <- anthro_data |>
+    process_age(
+      svdate = "dos",
+      birdate = "dob",
+      age = age
+    ) |>
+    process_muac_data(
+      sex = sex,
+      muac = muac,
+      age = "age",
+      .recode_sex = TRUE,
+      .recode_muac = TRUE,
+      unit = "cm"
+    )
+
+  processed_df[["not_flag"]] <- remove_flags(processed_df[["mfaz"]], unit = "zscore")
+
+  #### The test ----
+  testthat::test_that(
+    "remove_flags() assign NA's when flaggs are identified",
+    {
+      with(
+        processed_df,
+        testthat::expect_length(processed_df[["not_flag"]], 7740)
+      )
+    }
+  )
+})
+
+### Test check: remove_flags() with method set to "crude"----
+local({
+  #### Observed results ----
+  processed_df <- anthro_data |>
+    process_age(
+      svdate = "dos",
+      birdate = "dob",
+      age = age
+    ) |>
+    process_muac_data(
+      sex = sex,
+      muac = muac,
+      age = NULL,
+      .recode_sex = TRUE,
+      .recode_muac = FALSE,
+      unit = "none"
+    )
+  processed_df[["not_flag"]] <- remove_flags(processed_df[["muac"]], unit = "crude")
+
+  #### The test ----
+  testthat::test_that(
+    "remove_flags() assign NA's when flaggs are identified",
+    {
+      with(
+        processed_df,
+        testthat::expect_length(processed_df[["not_flag"]], 7740)
+      )
+    }
+  )
+})
 
 ### Test check: recode_muac() ----
 local(

@@ -20,7 +20,7 @@ muac_data
 A MUAC screening data from an anonymized setting
 }
 \examples{
-muac_scre
+muac_data
 
 }
 \keyword{datasets}

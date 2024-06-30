@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_processors.R
 \name{process_muac_data}
 \alias{process_muac_data}
-\title{Process MUAC data}
+\title{Process MUAC data a get it ready for analyses}
 \usage{
 process_muac_data(
   df,

@@ -63,6 +63,6 @@
 #' | *muac* | Mid-upper arm circumference (mm) |
 #'
 #' @examples
-#' muac_scre
+#' muac_data
 #'
 "muac_data"
