@@ -4,7 +4,7 @@
 local(
   {
     ### Input data ----
-    df <- anthro_data |>
+    df <- anthro.01 |>
       process_age(
         svdate = "dos",
         birdate = "dob",
@@ -19,7 +19,7 @@ local(
         unit = "cm"
       ) |>
       check_plausibility_mfaz(
-        flags = flags,
+        flags = flag_mfaz,
         sex = sex,
         muac = muac,
         age = age,
@@ -28,12 +28,12 @@ local(
 
     ### The test ----
     testthat::test_that(
-      "evaluate_quality_mfaz() return a df with expected lentgh and columns",
+      "evaluate_quality_mfaz() return a df with expected lentgh and width",
       {
         testthat::expect_s3_class(df, "tbl_df")
         testthat::expect_vector(df)
         testthat::expect_equal(ncol(df), 18)
-        testthat::expect_equal(nrow(df), 11)
+        testthat::expect_equal(nrow(df), 2)
         testthat::expect_true(
           all(c(
             "area", "n", "flagged", "flagged_class", "sex_ratio",
@@ -54,7 +54,7 @@ local(
 local(
   {
     ### Input data ----
-    df <- anthro_data |>
+    df <- anthro.01 |>
       process_age(
         svdate = "dos",
         birdate = "dob",
@@ -71,7 +71,7 @@ local(
         age = age,
         weight = weight,
         height = height,
-        flags = flags,
+        flags = flag_wfhz,
         area = area
       )
 
@@ -82,7 +82,7 @@ local(
         testthat::expect_s3_class(df, "tbl_df")
         testthat::expect_vector(df)
         testthat::expect_equal(ncol(df), 20)
-        testthat::expect_equal(nrow(df), 11)
+        testthat::expect_equal(nrow(df), 2)
         testthat::expect_true(
           all(c(
             "area", "n", "flagged", "flagged_class", "sex_ratio",
@@ -104,7 +104,7 @@ local(
 local(
   {
     ### Input data ----
-    df <- anthro_data |>
+    df <- anthro.01 |>
       process_muac_data(
         sex = sex,
         muac = muac,
@@ -116,7 +116,7 @@ local(
       check_plausibility_muac(
         sex = sex,
         muac = muac,
-        flags = flags
+        flags = flag_muac
       )
 
     ### The test ----

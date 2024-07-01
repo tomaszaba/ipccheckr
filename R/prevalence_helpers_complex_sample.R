@@ -190,7 +190,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #'
 #' @examples
 #' # MUAC-based case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' muac = muac,
 #' edema = edema,
@@ -199,7 +199,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #' head(x)
 #'
 #' # Weight-for-height based case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' zscore = wfhz,
 #' edema = edema,
@@ -208,7 +208,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #' head(x)
 #'
 #' # Combined case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' zscore = wfhz,
 #' muac = muac,

@@ -33,7 +33,7 @@ analysis.
 }
 \examples{
 ## Have a sample data ----
-anthro_data |>
+anthro.01 |>
 process_whz_data(
 sex = sex,
 weight = weight,

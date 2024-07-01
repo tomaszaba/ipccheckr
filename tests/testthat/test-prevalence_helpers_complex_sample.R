@@ -273,7 +273,7 @@ local({
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- wfhz.01 |>
       define_wasting(wfhz, edema, base = "wfhz") |>
       dplyr::select(gam, sam, mam)
 
@@ -283,9 +283,9 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("gam", "sam", "mam"))
-        testthat::expect_vector(x$gam, size = 7740)
-        testthat::expect_vector(x$sam, size = 7740)
-        testthat::expect_vector(x$mam, size = 7740)
+        testthat::expect_vector(x$gam, size = 303)
+        testthat::expect_vector(x$sam, size = 303)
+        testthat::expect_vector(x$mam, size = 303)
       }
     )
   }
@@ -295,7 +295,7 @@ local(
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- mfaz.02 |>
       define_wasting(muac = muac, edema = edema, base = "muac") |>
       dplyr::select(gam, sam, mam)
 
@@ -305,9 +305,9 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("gam", "sam", "mam"))
-        testthat::expect_vector(x$gam, size = 7740)
-        testthat::expect_vector(x$sam, size = 7740)
-        testthat::expect_vector(x$mam, size = 7740)
+        testthat::expect_vector(x$gam, size = 303)
+        testthat::expect_vector(x$sam, size = 303)
+        testthat::expect_vector(x$mam, size = 303)
       }
     )
   }
@@ -317,7 +317,7 @@ local(
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- anthro.02 |>
       define_wasting(wfhz, muac, edema, base = "combined") |>
       dplyr::select(cgam, csam, cmam)
 
@@ -327,9 +327,9 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("cgam", "csam", "cmam"))
-        testthat::expect_vector(x$cgam, size = 7740)
-        testthat::expect_vector(x$csam, size = 7740)
-        testthat::expect_vector(x$cmam, size = 7740)
+        testthat::expect_vector(x$cgam, size = 2267)
+        testthat::expect_vector(x$csam, size = 2267)
+        testthat::expect_vector(x$cmam, size = 2267)
       }
     )
   }

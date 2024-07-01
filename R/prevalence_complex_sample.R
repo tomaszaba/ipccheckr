@@ -30,7 +30,7 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
 )
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$flag_wfhz == 0) |>
+        filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
             c(.data$gam:.data$mam),
@@ -61,7 +61,7 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
 
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$flag_wfhz == 0) |>
+        filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
             c(.data$gam:.data$mam),
@@ -102,7 +102,7 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$flag_wfhz == 0) |>
+        filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
             c(.data$gam:.data$mam),
@@ -132,7 +132,7 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$flag_wfhz == 0) |>
+        filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
             c(.data$gam:.data$mam),
@@ -163,7 +163,7 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
   a <- df[["age"]]
   age_ratio <- classify_age_sex_ratio(age_ratio_test(a, .expectedP = 0.66)$p)
   zs <- df[["mfaz"]]
-  std <- classify_sd(sd(remove_flags(zs, "zscore"), na.rm = TRUE))
+  std <- classify_sd(sd(remove_flags(as.numeric(zs), "zscore"), na.rm = TRUE))
 
   ## Check the appropriate analysis strategy to follow ----
   muac_analysis <- tell_muac_analysis_strategy(age_ratio, std)
@@ -192,7 +192,7 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarize prevalence ----
         p <- srvy |>
-          subset(.data$flag_mfaz == 0) |>
+          filter(.data$flag_mfaz == 0) |>
           summarise(
           across(
             c(.data$gam:.data$mam),
@@ -223,7 +223,7 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
         p <- srvy |>
-          subset(.data$flag_mfaz == 0) |>
+          filter(.data$flag_mfaz == 0) |>
           summarise(
           across(
             c(.data$gam:.data$mam),
@@ -247,7 +247,7 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
   if (muac_analysis == "weighted") {
     #### Apply CDC/SMART MUAC tool weighting for age bias ----
     p <- df |>
-      subset(.data$flags == 0) |>
+      filter(.data$flag_mfaz == 0) |>
       mutate(muac = recode_muac(.data$muac, unit = "mm")) |>
       summarise(
         sam = cdc_apply_age_weighting(
@@ -317,7 +317,7 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
         p <- srvy |>
-          subset(.data$cflags == 0) |>
+          filter(.data$cflags == 0) |>
           summarise(
           across(
             c(.data$cgam:.data$cmam),
@@ -348,7 +348,7 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
       )
     #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$cflags == 0) |>
+        filter(.data$cflags == 0) |>
         summarise(
         across(
           c(.data$cgam:.data$cmam),
@@ -400,7 +400,7 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$cflags == 0) |>
+        filter(.data$cflags == 0) |>
         summarise(
           across(
             c(.data$cgam:.data$cmam),
@@ -431,7 +431,7 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
         )
       #### Summarise prevalence ----
       p <- srvy |>
-        subset(.data$cflags == 0) |>
+        filter(.data$cflags == 0) |>
         summarise(
           across(
             c(.data$cgam:.data$cmam),

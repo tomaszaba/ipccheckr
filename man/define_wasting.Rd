@@ -36,7 +36,7 @@ Use \code{define_wasting()} to add the case-definitions in your input data frame
 }
 \examples{
 # MUAC-based case-definition ----
-x <- prev_data |>
+x <- anthro.02 |>
 define_wasting(
 muac = muac,
 edema = edema,
@@ -45,7 +45,7 @@ base = "muac"
 head(x)
 
 # Weight-for-height based case-definition ----
-x <- prev_data |>
+x <- anthro.02 |>
 define_wasting(
 zscore = wfhz,
 edema = edema,
@@ -54,7 +54,7 @@ base = "wfhz"
 head(x)
 
 # Combined case-definition ----
-x <- prev_data |>
+x <- anthro.02 |>
 define_wasting(
 zscore = wfhz,
 muac = muac,

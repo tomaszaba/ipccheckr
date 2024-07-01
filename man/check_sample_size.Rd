@@ -4,7 +4,7 @@
 \alias{check_sample_size}
 \title{Check IPC AMN Sample Size Requirements}
 \usage{
-check_sample_size(df, .group, data_type = c("survey", "screening", "ssite"))
+check_sample_size(df, .group, .data_type = c("survey", "screening", "ssite"))
 }
 \arguments{
 \item{df}{A data frame containing the required variables.}
@@ -14,7 +14,7 @@ Usually and ideally a numeric vector, but sometimes this variables may come as
 a character vector. Either way, \code{check_sample_size()} will execute
 the task accordingly.}
 
-\item{data_type}{The data collection method: survey, screening or sentinel sites.
+\item{.data_type}{The data collection method: survey, screening or sentinel sites.
 If you wish to check IPC AMN requirements on surveys were met, set
 method = "survey"; for screening set method = "screening" and for sentinel
 sites set method = "ssite". If by mistake a different parameter is given,
@@ -26,11 +26,11 @@ how to go about.}
 as the input (data frame), but of a different size. By default, the function
 returns a summary of length 1 (one row), but with three new columns added to
 the input data frame: \code{groups} (for survey), or sites (for screening or sentinel
-sites) \code{n_obs} and \code{sample_check}. The first will store the total number of PSUs
+sites) \code{n_obs} and \code{meet_ipc}. The first will store the total number of PSUs
 in the sample. \code{n_obs} will store the total number of rows/observations and
-\code{sample_check} is a logical vector to say whether or not the IPC AMN minimum
+\code{meet_ipc} is a logical vector to say whether or not the IPC AMN minimum
 criteria for sample size was met. This is flexible according to the method you
-select with \code{data_type = " "}.
+select with \code{.data_type = " "}.
 }
 \description{
 Evidence used in \href{https://www.ipcinfo.org/ipcinfo-website/resources/ipc-manual/en/}{IPC}
@@ -51,27 +51,7 @@ working on data that do not meet the minimum requirements, as it will not be
 used in any IPC analysis.
 }
 \examples{
-# Have an input data frame ---------------------------------------------------
-
-## A vector with survey or screening or sites areas ----
-area <- c("area 1", "area 2", "area 1", "area 2", "area 2", "area 1",
-"area 1", "area 1", "area 1", "area 1", "area 1", "area 1"
-)
-
-## A vector with the PSU ID's ----
-cluster <- c(20, 20, 21, 21, 21, 1, 2, 3, 4, 40, 40, 9)
-
-## Bind them into a data frame ----
-data <- data.frame(area, cluster)
-
-## Apply the function ----
-### Set data_type = "survey" ----
-check_sample_size(data, .group = cluster, data_type = "survey")
-
-### Set method = "screening"
-check_sample_size(data, .group = cluster, data_type = "screening")
-
-### Set method = "ssite" ----
-check_sample_size(data, .group = cluster, data_type = "ssite")
+# Have an input data frame --------------------------------------------------
+check_sample_size(anthro.01, .group = cluster, .data_type = "survey")
 
 }

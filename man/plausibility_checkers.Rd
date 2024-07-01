@@ -51,7 +51,7 @@ WHZ only. If you wish to know about MUAC checks consider using either
 
 ## Check Plausibility: MFAZ ----
 
-anthro_data |>
+anthro.01 |>
 process_age(
 svdate = "dos",
 birdate = "dob",
@@ -66,7 +66,7 @@ muac = muac,
 unit = "cm"
 ) |>
 check_plausibility_mfaz(
-flags = flags,
+flags = flag_mfaz,
 sex = sex,
 muac = muac,
 age = age,
@@ -75,7 +75,7 @@ area = area
 
 ## Check Plausibility: WHZ ----
 
-anthro_data |>
+anthro.01 |>
 process_age(
 svdate = "dos",
 birdate = "dob",
@@ -88,7 +88,7 @@ height = height,
 .recode_sex = TRUE
 ) |>
 check_plausibility_whz(
-flags = flags,
+flags = flag_wfhz,
 sex = sex,
 age = age,
 weight = weight,
@@ -98,7 +98,7 @@ area = area
 
 ## Check Plausibility: MUAC ----
 
-anthro_data |>
+anthro.01 |>
 process_muac_data(
 sex = sex,
 muac = muac,
@@ -108,7 +108,7 @@ age = NULL,
 unit = "none"
 ) |>
 check_plausibility_muac(
-flags = flags,
+flags = flag_muac,
 sex = sex,
 muac = muac
 )

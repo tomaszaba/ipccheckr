@@ -252,13 +252,13 @@ process_muac_data <- function(df,
         digits = 3
       )|>
       mutate(
-        flags = do.call(flag_outliers, list(.data$mfaz, type = "zscore"))
+        flag_mfaz = do.call(flag_outliers, list(.data$mfaz, type = "zscore"))
       )
   } else {
     df <- df |>
       mutate(
         sex = !!recode_sex,
-        flags = do.call(flag_outliers, list({{ muac }}, type = "crude"))
+        flag_muac = do.call(flag_outliers, list({{ muac }}, type = "crude"))
       )
   }
   dplyr::as_tibble(df)
@@ -294,7 +294,7 @@ process_muac_data <- function(df,
 #'
 #' @examples
 #' ## Have a sample data ----
-#' anthro_data |>
+#' anthro.01 |>
 #' process_whz_data(
 #' sex = sex,
 #' weight = weight,
@@ -319,14 +319,14 @@ process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
       sex = !!recode_sex
     ) |>
     addWGSR(
-      sex = "sex",
-      firstPart = "weight",
-      secondPart = "height",
+      sex = {{ "sex" }},
+      firstPart = {{ "weight" }},
+      secondPart = {{ "height" }},
       index = "wfh",
       digits = 3
     ) |>
     mutate(
-      flags = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
+      flag_wfhz = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
     )
   dplyr::as_tibble(df)
 }

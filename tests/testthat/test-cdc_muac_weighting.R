@@ -68,22 +68,22 @@ local({
 
 local({
   #### Input data ----
-  x <- muac_data |>
-    process_age(age = months) |>
+  x <- mfaz.01 |>
+    process_age(age = age) |>
     process_muac_data(
       sex = sex,
       muac = muac,
-      age = "months",
+      age = "age",
       .recode_sex = TRUE,
       .recode_muac = TRUE,
       unit = "cm"
     ) |>
-    subset(flags == 0) |>
+    subset(flag_mfaz == 0) |>
     dplyr::mutate(muac = recode_muac(muac, unit = "mm"))
 
 
   #### Expected results calculated in the CDC/SMART MUAC tool ----
-  expect_sam <- 0.023
+  expect_sam <- 0.021
   expect_mam <- 0.081
 
   #### Observed results ----
@@ -91,14 +91,14 @@ local({
                   cdc_apply_age_weighting(
                     muac = muac,
                     edema = edema,
-                    age = months,
+                    age = age,
                     status = "sam")
   )
   obs_mam <- with(x,
                   cdc_apply_age_weighting(
                     muac = muac,
                     edema = edema,
-                    age = months,
+                    age = age,
                     status = "mam")
   )
 
@@ -117,36 +117,36 @@ local({
 ### Edema set to NULL ----
 local({
   #### Input data ----
-  x <- muac_data |>
-    process_age(age = months) |>
+  x <- mfaz.01 |>
+    process_age(age = age) |>
     process_muac_data(
       sex = sex,
       muac = muac,
-      age = "months",
+      age = "age",
       .recode_sex = TRUE,
       .recode_muac = TRUE,
       unit = "cm"
     ) |>
-    subset(flags == 0) |>
+    subset(flag_mfaz == 0) |>
     dplyr::mutate(
       muac = recode_muac(muac, unit = "mm"))
 
 
   #### Expected results calculated in the CDC/SMART MUAC tool ----
-  expect_sam <- 0.016
+  expect_sam <- 0.014
   expect_mam <- 0.080
 
   #### Observed results ----
   obs_sam <- with(x,
                   cdc_apply_age_weighting(
                     muac = muac,
-                    age = months,
+                    age = age,
                     status = "sam")
   )
   obs_mam <- with(x,
                   cdc_apply_age_weighting(
                     muac = muac,
-                    age = months,
+                    age = age,
                     status = "mam")
   )
 

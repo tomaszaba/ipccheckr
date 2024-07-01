@@ -29,7 +29,9 @@ for you so you already.
 }
 \examples{
 
-anthro_data |>
+## Plausibility check on MUAC-for-age zscores ----
+
+anthro.01 |>
 process_age(
 svdate = "dos",
 birdate = "dob",
@@ -44,7 +46,7 @@ muac = muac,
 unit = "cm"
 ) |>
 check_plausibility_mfaz(
-flags = flags,
+flags = flag_mfaz,
 sex = sex,
 muac = muac,
 age = age,
@@ -52,7 +54,9 @@ area = area
 ) |>
 generate_pretty_table_mfaz()
 
-anthro_data |>
+## Plausibility check on absolute MUAC ----
+
+anthro.01 |>
 process_muac_data(
 sex = sex,
 muac = muac,
@@ -62,10 +66,20 @@ age = NULL,
 unit = "none"
 ) |>
 check_plausibility_muac(
-flags = flags,
+flags = flag_muac,
 sex = sex,
 muac = muac
 ) |>
 generate_pretty_table_muac()
+
+## Plausibility check on weight-for-height zscores ----
+
+anthro.01 |>
+process_whz_data(
+sex = sex,
+weight = weight,
+height = height,
+.recode_sex = TRUE
+)
 
 }

@@ -38,7 +38,7 @@
 #'
 #' ## Check Plausibility: MFAZ ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_age(
 #' svdate = "dos",
 #' birdate = "dob",
@@ -53,7 +53,7 @@
 #' unit = "cm"
 #' ) |>
 #' check_plausibility_mfaz(
-#' flags = flags,
+#' flags = flag_mfaz,
 #' sex = sex,
 #' muac = muac,
 #' age = age,
@@ -62,7 +62,7 @@
 #'
 #' ## Check Plausibility: WHZ ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_age(
 #' svdate = "dos",
 #' birdate = "dob",
@@ -75,7 +75,7 @@
 #' .recode_sex = TRUE
 #' ) |>
 #' check_plausibility_whz(
-#' flags = flags,
+#' flags = flag_wfhz,
 #' sex = sex,
 #' age = age,
 #' weight = weight,
@@ -85,7 +85,7 @@
 #'
 #' ## Check Plausibility: MUAC ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_muac_data(
 #' sex = sex,
 #' muac = muac,
@@ -95,7 +95,7 @@
 #' unit = "none"
 #' ) |>
 #' check_plausibility_muac(
-#' flags = flags,
+#' flags = flag_muac,
 #' sex = sex,
 #' muac = muac
 #' )
