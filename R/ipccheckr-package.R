@@ -15,7 +15,6 @@
 #' @importFrom srvyr survey_mean
 #' @importFrom stats na.omit prop.test sd
 #' @importFrom stats setNames
-#' @importFrom tidyr pivot_longer
 #' @importFrom zscorer addWGSR
 ## usethis namespace: end
 NULL

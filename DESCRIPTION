@@ -31,7 +31,6 @@ Imports:
     scales,
     srvyr,
     stats,
-    tidyr,
     zscorer
 Suggests: 
     spelling,

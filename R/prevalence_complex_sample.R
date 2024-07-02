@@ -3,7 +3,7 @@
 #'
 #'
 #'
-compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
+compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
   ## Get and classify standard deviation ----
   x <- df[["wfhz"]]
   std <- classify_sd(sd(remove_flags(x, "zscore"), na.rm = TRUE))
@@ -16,18 +16,15 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
                               edema = {{ edema }},
                               base = "wfhz"))
     #### Create a survey object ----
-    if (!is.null(wt)) {
+    if (!is.null(.wt)) {
       srvy <- df |>
-  as_survey_design(
-  ids = .data$cluster,
-  variables = c(
-    .data$cluster, .data$sex, .data$age, .data$gam,
-    .data$sam, .data$mam, .data$edema, .data$flag_wfhz
-  ),
-  pps = "brewer",
-  variance = "YG",
-  weights = {{ wt }}
-)
+        as_survey_design(
+          ids = .data$cluster,
+          pps = "brewer",
+          variance = "YG",
+          weights = {{ .wt }}
+          ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$flag_wfhz == 0) |>
@@ -41,24 +38,15 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
     } else {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$gam,
-            .data$sam, .data$mam, .data$edema, .data$flag_wfhz
-          ),,
           pps = "brewer",
           variance = "YG"
-        )
-
+        ) |>
+        group_by( {{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$flag_wfhz == 0) |>
@@ -72,13 +60,8 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
-    }
+      }
     p
   }
 
@@ -88,18 +71,15 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
       mutate(wfhz = normalize_zscore(.data$wfhz)) |>
       define_wasting(zscore = .data$wfhz, edema = {{ edema }}, base = "wfhz")
 
-    if (!is.null(wt)) {
+    if (!is.null(.wt)) {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$gam,
-            .data$sam, .data$mam, .data$edema, .data$flag_wfhz
-          ),
           pps = "brewer",
           variance = "YG",
-          weights = {{ wt }}
-        )
+          weights = {{ .wt }}
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$flag_wfhz == 0) |>
@@ -113,23 +93,15 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
     } else {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$gam,
-            .data$sam, .data$mam, .data$edema, .data$flag_wfhz
-          ),
           pps = "brewer",
           variance = "YG"
-        )
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$flag_wfhz == 0) |>
@@ -143,14 +115,9 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
+      }
     }
-  }
   p
 }
 
@@ -158,7 +125,7 @@ compute_wfhz_prevalence <- function(df, wt = NULL, edema = NULL) {
 #'
 #'
 #'
-compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
+compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
   ## Get and classify age ratio and standard deviation ----
   a <- df[["age"]]
   age_ratio <- classify_age_sex_ratio(age_ratio_test(a, .expectedP = 0.66)$p)
@@ -170,30 +137,29 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
 
   if (muac_analysis == "unweighted") {
     ## Compute observed prevalence ----
-    df <- with(df,
-               define_wasting(df,
-                              muac = .data$muac,
-                              edema = {{ edema }},
-                              base = "muac"
-                              ))
+    df <- with(
+      df,
+      define_wasting(df,
+        muac = .data$muac,
+        edema = {{ edema }},
+        base = "muac"
+      )
+    )
 
     ### Weighted survey analysis ----
-    if (!is.null(wt)) {
+    if (!is.null(.wt)) {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$gam,
-            .data$sam, .data$mam, .data$edema, .data$flag_mfaz
-            ),
           pps = "brewer",
           variance = "YG",
-          weights = {{ wt }}
-        )
+          weights = {{ .wt }}
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarize prevalence ----
-        p <- srvy |>
-          filter(.data$flag_mfaz == 0) |>
-          summarise(
+      p <- srvy |>
+        filter(.data$flag_mfaz == 0) |>
+        summarise(
           across(
             c(.data$gam:.data$mam),
             \(x) survey_mean(x,
@@ -203,28 +169,20 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
     } else {
       ### Unweighted: typical SMART survey analysis ----
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$gam,
-            .data$sam, .data$mam, .data$edema, .data$flag_mfaz
-          ),
           pps = "brewer",
           variance = "YG"
-        )
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
-        p <- srvy |>
-          filter(.data$flag_mfaz == 0) |>
-          summarise(
+      p <- srvy |>
+        filter(.data$flag_mfaz == 0) |>
+        summarise(
           across(
             c(.data$gam:.data$mam),
             \(x) survey_mean(x,
@@ -234,13 +192,8 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
-    }
+      }
     p
   }
 
@@ -263,8 +216,8 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
           status = "mam"
         ),
         gam = sum(.data$sam, .data$mam)
-      ) |> dplyr::as_tibble()
-  }
+      )
+    }
   p
 
   if (muac_analysis == "missing") {
@@ -276,7 +229,8 @@ compute_muac_prevalence <- function(df, wt = NULL, edema = NULL) {
 # Function to compute combined prevalence --------------------------------------
 #'
 #'
-compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
+compute_combined_prevalence <- function(df,
+                                        .wt = NULL, edema = NULL, .summary_by) {
   ## Get WHZ's standard deviation and classify it ----
   x <- df[["wfhz"]]
   std_wfhz <- classify_sd(sd(remove_flags(x, "zscore"), na.rm = TRUE))
@@ -289,36 +243,34 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
   muac_analysis <- tell_muac_analysis_strategy(age_ratio, std_mfaz)
 
   if (std_wfhz != "Problematic" && muac_analysis == "unweighted") {
-
     ### Compute observed prevalence ----
     df <- with(
       df,
       define_wasting(df,
-                     zscore = .data$wfhz,
-                     muac = .data$muac,
-                     edema = {{ edema }},
-                     base = "combined"
-                     ) |>
-        mutate(cflags = ifelse(.data$flag_wfhz == 1 | .data$flag_mfaz == 1, 1, 0))
+        zscore = .data$wfhz,
+        muac = .data$muac,
+        edema = {{ edema }},
+        base = "combined"
+      ) |>
+        mutate(
+          cflags = ifelse(.data$flag_wfhz == 1 | .data$flag_mfaz == 1, 1, 0)
+        )
     )
 
     #### Create survey object ----
-    if (!is.null(wt)) {
+    if (!is.null(.wt)) {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$cgam,
-            .data$csam, .data$cmam, .data$edema, .data$cflags
-            ),
           pps = "brewer",
           variance = "YG",
-          weights = {{ wt }}
-        )
+          weights = {{ .wt }}
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
-        p <- srvy |>
-          filter(.data$cflags == 0) |>
-          summarise(
+      p <- srvy |>
+        filter(.data$cflags == 0) |>
+        summarise(
           across(
             c(.data$cgam:.data$cmam),
             \(x) survey_mean(x,
@@ -328,49 +280,35 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
     } else {
       #### Unweighted analysis: A typical SMART survey analysis ----
-    srvy <- df |>
-      as_survey_design(
-        ids = .data$cluster,
-        variables = c(
-          .data$cluster, .data$sex, .data$age, .data$cgam,
-          .data$csam, .data$cmam, .data$edema, .data$cflags
-        ),
-        pps = "brewer",
-        variance = "YG"
-      )
-    #### Summarise prevalence ----
+      srvy <- df |>
+        as_survey_design(
+          ids = .data$cluster,
+          pps = "brewer",
+          variance = "YG"
+        ) |>
+        group_by({{ .summary_by }})
+      #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$cflags == 0) |>
         summarise(
-        across(
-          c(.data$cgam:.data$cmam),
-          \(x) survey_mean(x,
-            vartype = "ci",
-            level = 0.95,
-            deff = TRUE,
-            na.rm = TRUE
+          across(
+            c(.data$cgam:.data$cmam),
+            \(x) survey_mean(x,
+              vartype = "ci",
+              level = 0.95,
+              deff = TRUE,
+              na.rm = TRUE
+            )
           )
         )
-      ) |>
-      pivot_longer(
-        cols = everything(),
-        names_to = "variable",
-        values_to = "estimate"
-      )
-    }
+      }
     p
   }
 
   if (std_wfhz == "Problematic" && muac_analysis == "unweighted") {
-
     ### Compute prevalence with normalized zscores ----
     #### Normalize zscores, define combined cases and combined flags ----
     df <- with(
@@ -386,18 +324,15 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
     )
 
     #### Create survey object ----
-    if (!is.null(wt)) {
+    if (!is.null(.wt)) {
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$cgam,
-            .data$csam, .data$cmam, .data$edema, .data$cflags
-          ),
           pps = "brewer",
           variance = "YG",
-          weights = {{ wt }}
-        )
+          weights = {{ .wt }}
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$cflags == 0) |>
@@ -411,24 +346,16 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
     } else {
       #### Unweighted analysis: A typical SMART survey analysis ----
       srvy <- df |>
         as_survey_design(
           ids = .data$cluster,
-          variables = c(
-            .data$cluster, .data$sex, .data$age, .data$cgam,
-            .data$csam, .data$cmam, .data$edema, .data$cflags
-          ),
           pps = "brewer",
           variance = "YG"
-        )
+        ) |>
+        group_by({{ .summary_by }})
       #### Summarise prevalence ----
       p <- srvy |>
         filter(.data$cflags == 0) |>
@@ -442,18 +369,13 @@ compute_combined_prevalence <- function(df, wt = NULL, edema = NULL) {
               na.rm = TRUE
             )
           )
-        ) |>
-        pivot_longer(
-          cols = everything(),
-          names_to = "variable",
-          values_to = "estimate"
         )
-    }
-   p
+      }
+    p
   }
 
   if (std_wfhz == "Problematic" && muac_analysis == "weighted") {
     p <- NA_real_
   }
- p
+  p
 }
