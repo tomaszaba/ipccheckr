@@ -3,7 +3,7 @@
 #'
 #'
 #'
-compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
+compute_wfhz_prevalence <- function(df, .wt = NULL, .edema = NULL, .summary_by) {
   ## Get and classify standard deviation ----
   x <- df[["wfhz"]]
   std <- classify_sd(sd(remove_flags(x, "zscore"), na.rm = TRUE))
@@ -13,7 +13,7 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
     df <- with(df,
                define_wasting(df,
                               zscore = .data$wfhz,
-                              edema = {{ edema }},
+                              edema = {{ .edema }},
                               base = "wfhz"))
     #### Create a survey object ----
     if (!is.null(.wt)) {
@@ -23,10 +23,11 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           pps = "brewer",
           variance = "YG",
           weights = {{ .wt }}
-          ) |>
-        group_by({{ .summary_by }})
+          )
+
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
@@ -45,10 +46,11 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           ids = .data$cluster,
           pps = "brewer",
           variance = "YG"
-        ) |>
-        group_by( {{ .summary_by }})
+        )
+
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
@@ -69,7 +71,7 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
     ### Compute prevalence with a normalized zscores ----
     df <- df |>
       mutate(wfhz = normalize_zscore(.data$wfhz)) |>
-      define_wasting(zscore = .data$wfhz, edema = {{ edema }}, base = "wfhz")
+      define_wasting(zscore = .data$wfhz, edema = {{ .edema }}, base = "wfhz")
 
     if (!is.null(.wt)) {
       srvy <- df |>
@@ -78,10 +80,10 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           pps = "brewer",
           variance = "YG",
           weights = {{ .wt }}
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
@@ -100,10 +102,10 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           ids = .data$cluster,
           pps = "brewer",
           variance = "YG"
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_wfhz == 0) |>
         summarise(
           across(
@@ -125,7 +127,7 @@ compute_wfhz_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
 #'
 #'
 #'
-compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
+compute_muac_prevalence <- function(df, .wt = NULL, .edema = NULL, .summary_by) {
   ## Get and classify age ratio and standard deviation ----
   a <- df[["age"]]
   age_ratio <- classify_age_sex_ratio(age_ratio_test(a, .expectedP = 0.66)$p)
@@ -141,7 +143,7 @@ compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
       df,
       define_wasting(df,
         muac = .data$muac,
-        edema = {{ edema }},
+        edema = {{ .edema }},
         base = "muac"
       )
     )
@@ -154,10 +156,10 @@ compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           pps = "brewer",
           variance = "YG",
           weights = {{ .wt }}
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarize prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_mfaz == 0) |>
         summarise(
           across(
@@ -177,10 +179,10 @@ compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
           ids = .data$cluster,
           pps = "brewer",
           variance = "YG"
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$flag_mfaz == 0) |>
         summarise(
           across(
@@ -206,13 +208,13 @@ compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
         sam = cdc_apply_age_weighting(
           muac = .data$muac,
           age = .data$age,
-          edema = .data$edema,
+          edema = .data$.edema,
           status = "sam"
         ),
         mam = cdc_apply_age_weighting(
           muac = .data$muac,
           age = .data$age,
-          edema = .data$edema,
+          edema = .data$.edema,
           status = "mam"
         ),
         gam = sum(.data$sam, .data$mam)
@@ -230,7 +232,7 @@ compute_muac_prevalence <- function(df, .wt = NULL, edema = NULL, .summary_by) {
 #'
 #'
 compute_combined_prevalence <- function(df,
-                                        .wt = NULL, edema = NULL, .summary_by) {
+                                        .wt = NULL, .edema = NULL, .summary_by) {
   ## Get WHZ's standard deviation and classify it ----
   x <- df[["wfhz"]]
   std_wfhz <- classify_sd(sd(remove_flags(x, "zscore"), na.rm = TRUE))
@@ -249,7 +251,7 @@ compute_combined_prevalence <- function(df,
       define_wasting(df,
         zscore = .data$wfhz,
         muac = .data$muac,
-        edema = {{ edema }},
+        edema = {{ .edema }},
         base = "combined"
       ) |>
         mutate(
@@ -265,10 +267,10 @@ compute_combined_prevalence <- function(df,
           pps = "brewer",
           variance = "YG",
           weights = {{ .wt }}
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$cflags == 0) |>
         summarise(
           across(
@@ -288,10 +290,10 @@ compute_combined_prevalence <- function(df,
           ids = .data$cluster,
           pps = "brewer",
           variance = "YG"
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$cflags == 0) |>
         summarise(
           across(
@@ -317,7 +319,7 @@ compute_combined_prevalence <- function(df,
         define_wasting(
           zscore = .data$wfhz,
           muac = .data$muac,
-          edema = {{ edema }},
+          edema = {{ .edema }},
           base = "combined"
         ) |>
         mutate(cflags = ifelse(.data$flag_wfhz == 1 | .data$flag_mfaz == 1, 1, 0))
@@ -331,10 +333,10 @@ compute_combined_prevalence <- function(df,
           pps = "brewer",
           variance = "YG",
           weights = {{ .wt }}
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$cflags == 0) |>
         summarise(
           across(
@@ -354,10 +356,10 @@ compute_combined_prevalence <- function(df,
           ids = .data$cluster,
           pps = "brewer",
           variance = "YG"
-        ) |>
-        group_by({{ .summary_by }})
+        )
       #### Summarise prevalence ----
       p <- srvy |>
+        group_by({{ .summary_by }}) |>
         filter(.data$cflags == 0) |>
         summarise(
           across(

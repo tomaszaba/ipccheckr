@@ -1,12 +1,12 @@
 # Test checks for functions to compute complex sample bases estimates ----------
 
 ## Test check: compute_wfhz_prevalence() ----
-### When std =! problematic & !is.null(.wt) ----
+### When std =! problematic & !is.null(.wt) & !is.null(.edema) ----
 local({
 
   #### Get the prevalence estimates ----
   p <- anthro.02 |>
-    compute_wfhz_prevalence(edema = edema, .wt = "wtfactor")
+    compute_wfhz_prevalence(.edema = edema, .wt = "wtfactor")
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -43,12 +43,55 @@ local({
   )
 })
 
-### When std != problematic & is.null(.wt) ----
+### When std =! problematic & !is.null(.wt) & is.null(.edema) ----
+local({
+
+  #### Get the prevalence estimates ----
+  p <- anthro.02 |>
+    compute_wfhz_prevalence(.edema = NULL, .wt = "wtfactor")
+
+  #### Expected results ----
+  ##### GAM estimates and uncertainty ----
+  gam <- 3.5
+  gam_lci <- 2.6
+  gam_uci <- 4.5
+  deff <- 1.43
+
+  ##### SAM estimates and uncertainty ----
+  sam <- 0.0
+  sam_lci <- 0.0
+  sam_uci <- 0.0
+
+  ##### MAM estimates and uncertainty ----
+  mam <- 3.5
+  mam_lci <- 2.6
+  mam_uci <- 4.5
+
+  #### The test ----
+  testthat::test_that(
+    "compute_wfhz_prevalence() yields correct estimates when edema is NULL",
+    {
+      testthat::expect_equal(round(p[[1]][1]*100, 1), gam)
+      testthat::expect_equal(round(p[[2]][1]*100, 1), gam_lci)
+      testthat::expect_equal(round(p[[3]][1]*100, 1), gam_uci)
+      testthat::expect_equal(round(p[[4]][1], 2), deff)
+      testthat::expect_equal(round(p[[5]][1]*100, 1), sam)
+      testthat::expect_equal(round(p[[6]][1]*100, 1), sam_lci)
+      testthat::expect_equal(round(p[[7]][1]*100, 1), sam_uci)
+      testthat::expect_equal(round(p[[9]][1]*100, 1), mam)
+      testthat::expect_equal(round(p[[10]][1]*100, 1), mam_lci)
+      testthat::expect_equal(round(p[[11]][1]*100, 1), mam_uci)
+    }
+  )
+})
+
+
+### When std != problematic & is.null(.wt) & !is.null(.edema) ----
 local({
 
   #### Get the prevalence estimates ----
   w <- wfhz.01 |>
-    compute_wfhz_prevalence(edema = edema)
+    compute_wfhz_prevalence(.edema = edema)
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -68,7 +111,8 @@ local({
 
   #### The test ----
   testthat::test_that(
-    "compute_wfhz_prevalence() yields correct estimates",
+    "compute_wfhz_prevalence() yields correct estimates when survey weights is
+    NULL",
     {
       testthat::expect_equal(round(w[[1]][1]*100, 1), gam)
       testthat::expect_equal(round(w[[2]][1]*100, 1), gam_lci)
@@ -89,7 +133,7 @@ local({
   #### Get the prevalence estimates ----
   p <- anthro.02 |>
     compute_wfhz_prevalence(
-      edema = edema,
+      .edema = edema,
       .wt = "wtfactor",
       .summary_by = province
     )
@@ -139,12 +183,12 @@ local({
 
 
 ## Test check: compute_muac_prevalence() ----
-#### When age_ratio & std != problematic & !is.null(.wt) ----
+#### When age_ratio & std != problematic & !is.null(.wt) & !is.null(.edema) ----
 local({
 
   #### Get the prevalence estimates ----
   p <- anthro.02 |>
-    compute_muac_prevalence(edema = edema, .wt = "wtfactor")
+    compute_muac_prevalence(.edema = edema, .wt = "wtfactor")
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -165,7 +209,51 @@ local({
 
   #### The test ----
   testthat::test_that(
-    "compute_wfhz_prevalence() yields correct estimates",
+    "compute_muac_prevalence() yields correct estimates when edema and survey
+    weights are supplied",
+    {
+      testthat::expect_equal(round(p[[1]][1]*100, 1), gam)
+      testthat::expect_equal(round(p[[2]][1]*100, 1), gam_lci)
+      testthat::expect_equal(round(p[[3]][1]*100, 1), gam_uci)
+      testthat::expect_equal(round(p[[4]][1], 2), deff)
+      testthat::expect_equal(round(p[[5]][1]*100, 1), sam)
+      testthat::expect_equal(round(p[[6]][1]*100, 1), sam_lci)
+      testthat::expect_equal(round(p[[7]][1]*100, 1), sam_uci)
+      testthat::expect_equal(round(p[[9]][1]*100, 1), mam)
+      testthat::expect_equal(round(p[[10]][1]*100, 1), mam_lci)
+      testthat::expect_equal(round(p[[11]][1]*100, 1), mam_uci)
+    }
+  )
+})
+
+#### When age_ratio & std != problematic & !is.null(.wt) & !is.null(.edema) ----
+local({
+
+  #### Get the prevalence estimates ----
+  p <- anthro.02 |>
+    compute_muac_prevalence(.edema = NULL, .wt = "wtfactor")
+
+  #### Expected results ----
+  ##### GAM estimates and uncertainty ----
+  gam <- 5.0
+  gam_lci <- 3.8
+  gam_uci <- 6.2
+  deff <- 1.75
+
+  ##### SAM estimates and uncertainty ----
+  sam <- 0.9
+  sam_lci <- 0.4
+  sam_uci <- 1.5
+
+  ##### MAM estimates and uncertainty ----
+  mam <- 4.0
+  mam_lci <- 3.1
+  mam_uci <- 5.0
+
+  #### The test ----
+  testthat::test_that(
+    "compute_muac_prevalence() yields correct estimates when edema is not
+    supplied",
     {
       testthat::expect_equal(round(p[[1]][1]*100, 1), gam)
       testthat::expect_equal(round(p[[2]][1]*100, 1), gam_lci)
@@ -182,12 +270,13 @@ local({
 })
 
 
+
 #### When age_ratio & std != problematic & is.null(.wt) ----
 local({
 
   ##### Get prevalence estimates ----
   p <- anthro.02 |>
-    compute_muac_prevalence(edema = edema)
+    compute_muac_prevalence(.edema = edema)
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -207,7 +296,7 @@ local({
 
   #### The test ----
   testthat::test_that(
-    "compute_wfhz_prevalence() yields correct estimates",
+    "compute_muac_prevalence() yields correct estimates when edema is supplied",
     {
       testthat::expect_equal(round(p[[1]][1]*100, 1), gam)
       testthat::expect_equal(round(p[[2]][1]*100, 1), gam_lci)
@@ -228,7 +317,7 @@ local({
   #### Get prevalence estimates ----
   p <- anthro.02 |>
     compute_muac_prevalence(
-      edema = edema,
+      .edema = edema,
       .wt = "wtfactor",
       .summary_by = province
     )
@@ -276,7 +365,7 @@ local({
 
   #### Get prevalence estimates ----
   p <- anthro.02 |>
-    compute_combined_prevalence(edema = edema, .wt = "wtfactor")
+    compute_combined_prevalence(.edema = edema, .wt = "wtfactor")
 
   #### Expected results ----
   ##### combined GAM estimates and uncertainty ----
@@ -297,7 +386,8 @@ local({
 
   #### The test ----
   testthat::test_that(
-    "compute_combined_prevalence() yields correct estimates",
+    "compute_combined_prevalence() yields correct estimates when edema and
+    survey weights are supplied",
     {
       testthat::expect_equal(round(p[[1]][1]*100, 1), cgam)
       testthat::expect_equal(round(p[[2]][1]*100, 1), cgam_lci)
@@ -313,12 +403,55 @@ local({
   )
 })
 
+### When std != problematic & muac_analysis == unweighted & !is.null(.wt) ----
+local({
+
+  #### Get prevalence estimates ----
+  p <- anthro.02 |>
+    compute_combined_prevalence(.edema = NULL, .wt = "wtfactor")
+
+  #### Expected results ----
+  ##### combined GAM estimates and uncertainty ----
+  cgam <- 6.4
+  cgam_lci <- 5.0
+  cgam_uci <- 7.8
+  deff <- 1.67
+
+  ##### combined SAM estimates and uncertainty ----
+  csam <- 0.8
+  csam_lci <- 0.3
+  csam_uci <- 1.2
+
+  ##### combined MAM estimates and uncertainty ----
+  cmam <- 6.1
+  cmam_lci <- 4.8
+  cmam_uci <- 7.4
+
+  #### The test ----
+  testthat::test_that(
+    "compute_combined_prevalence() yields correct estimates when edema is NULL",
+    {
+      testthat::expect_equal(round(p[[1]][1]*100, 1), cgam)
+      testthat::expect_equal(round(p[[2]][1]*100, 1), cgam_lci)
+      testthat::expect_equal(round(p[[3]][1]*100, 1), cgam_uci)
+      testthat::expect_equal(round(p[[4]][1], 2), deff)
+      testthat::expect_equal(round(p[[5]][1]*100, 1), csam)
+      testthat::expect_equal(round(p[[6]][1]*100, 1), csam_lci)
+      testthat::expect_equal(round(p[[7]][1]*100, 1), csam_uci)
+      testthat::expect_equal(round(p[[9]][1]*100, 1), cmam)
+      testthat::expect_equal(round(p[[10]][1]*100, 1), cmam_lci)
+      testthat::expect_equal(round(p[[11]][1]*100, 1), cmam_uci)
+    }
+  )
+})
+
+
 ### When is.null(.wt) ----
 local({
 
   #### Get prevalence estimates ----
   p <- anthro.02 |>
-    compute_combined_prevalence(edema = edema)
+    compute_combined_prevalence(.edema = edema)
 
   #### Expected results ----
   ##### combined GAM estimates and uncertainty ----
@@ -359,7 +492,7 @@ local({
   #### Get prevalence estimates ----
   p <- anthro.02 |>
     compute_combined_prevalence(
-      edema = edema,
+      .edema = edema,
       .wt = "wtfactor",
       .summary_by = province
     )
