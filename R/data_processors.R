@@ -154,10 +154,13 @@ recode_muac <- function(muac, unit = c("cm", "mm")) {
 #' @param df The input data frame with variables sex, age and MUAC.
 #'
 #' @param sex A vector storing values about whether the child is a boy or a girl.
+#' The variable name must be named sex, otherwise it will not work.
 #'
 #' @param muac A vector storing crude MUAC values.
 #'
-#' @param age A vector storing values about child's age in months.
+#' @param age A vector storing values about child's age in months. The variable
+#' name must be named age, otherwise it will not work. For instance, if given as
+#' following: age = months it will not work.
 #'
 #' @param .recode_sex Logical. It asks whether you should recode your sex variable
 #' to the required shape to use in `process_muac_data()`. The default values for

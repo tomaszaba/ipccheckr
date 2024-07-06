@@ -17,11 +17,14 @@ process_muac_data(
 \arguments{
 \item{df}{The input data frame with variables sex, age and MUAC.}
 
-\item{sex}{A vector storing values about whether the child is a boy or a girl.}
+\item{sex}{A vector storing values about whether the child is a boy or a girl.
+The variable name must be named sex, otherwise it will not work.}
 
 \item{muac}{A vector storing crude MUAC values.}
 
-\item{age}{A vector storing values about child's age in months.}
+\item{age}{A vector storing values about child's age in months. The variable
+name must be named age, otherwise it will not work. For instance, if given as
+following: age = months it will not work.}
 
 \item{.recode_sex}{Logical. It asks whether you should recode your sex variable
 to the required shape to use in \code{process_muac_data()}. The default values for
