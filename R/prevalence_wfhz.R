@@ -1,7 +1,7 @@
 get_wfhz_prevalence_estimates <- function(df,
-                         .wt = NULL,
-                         .edema = NULL,
-                         .summary_by) {
+                                          .wt = NULL,
+                                          .edema = NULL,
+                                          .summary_by) {
   df <- with(
     df,
     define_wasting(
@@ -59,7 +59,6 @@ compute_wfhz_prevalence <- function(df,
                                     .wt = NULL,
                                     .edema = NULL,
                                     .summary_by) {
-
   ## Get and classify standard deviation ----
   x <- df[["wfhz"]]
   std <- classify_sd(sd(remove_flags(x, "zscore"), na.rm = TRUE))
@@ -70,10 +69,15 @@ compute_wfhz_prevalence <- function(df,
       get_wfhz_prevalence_estimates(
         .wt = {{ .wt }},
         .edema = {{ .edema }},
-        .summary_by = {{.summary_by}}
-        )
+        .summary_by = {{ .summary_by }}
+      )
   } else {
-    ### Compute prevalence with a normalized zscores ----
+    ### Compute prevalence with a standard deviation of 1 ----
+    p <- dplyr::tibble(
+      gam = normalize_prevalence(x, .status = "gam"),
+      sam = normalize_prevalence(x, .status = "sam"),
+      mam = gam - sam
+    )
   }
   p
 }

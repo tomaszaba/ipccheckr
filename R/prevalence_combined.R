@@ -1,57 +1,60 @@
+#'
+#'
+#'
 get_combined_prevalence_estimates <- function(df,
                                               .wt = NULL,
                                               .edema = NULL,
-                                              .summary_by
-                                              ) {
-df <- with(
-  df,
-  define_wasting(df,
-                 zscore = .data$wfhz,
-                 muac = .data$muac,
-                 edema = {{ .edema }},
-                 base = "combined"
-  ) |>
-    mutate(
-      cflags = ifelse(.data$flag_wfhz == 1 | .data$flag_mfaz == 1, 1, 0)
-    )
-)
-#### Create survey object ----
-if (!is.null(.wt)) {
-  srvy <- df |>
-    as_survey_design(
-      ids = .data$cluster,
-      pps = "brewer",
-      variance = "YG",
-      weights = {{ .wt }}
-    )
-} else {
-  srvy <- df |>
-    as_survey_design(
-      ids = .data$cluster,
-      pps = "brewer",
-      variance = "YG"
-    )
-}
-#### Summarise prevalence ----
-p <- srvy |>
-  group_by({{ .summary_by }}) |>
-  filter(.data$cflags == 0) |>
-  summarise(
-    across(
-      c(.data$cgam:.data$cmam),
-      list(
-        n = \(.)sum(., na.rm = TRUE),
-        p = \(.)survey_mean(.,
-                            vartype = "ci",
-                            level = 0.95,
-                            deff = TRUE,
-                            na.rm = TRUE
-        )
+                                              .summary_by) {
+  ## Case definition ----
+  df <- with(
+    df,
+    define_wasting(df,
+      zscore = .data$wfhz,
+      muac = .data$muac,
+      edema = {{ .edema }},
+      base = "combined"
+    ) |>
+      mutate(
+        cflags = ifelse(.data$flag_wfhz == 1 | .data$flag_mfaz == 1, 1, 0)
       )
-    ),
-    wt_pop = sum(srvyr::cur_svy_wts())
   )
-p
+  ## Create survey object ----
+  if (!is.null(.wt)) {
+    srvy <- df |>
+      as_survey_design(
+        ids = .data$cluster,
+        pps = "brewer",
+        variance = "YG",
+        weights = {{ .wt }}
+      )
+  } else {
+    srvy <- df |>
+      as_survey_design(
+        ids = .data$cluster,
+        pps = "brewer",
+        variance = "YG"
+      )
+  }
+  ## Summarise prevalence ----
+  p <- srvy |>
+    group_by({{ .summary_by }}) |>
+    filter(.data$cflags == 0) |>
+    summarise(
+      across(
+        c(.data$cgam:.data$cmam),
+        list(
+          n = \(.)sum(., na.rm = TRUE),
+          p = \(.)survey_mean(.,
+            vartype = "ci",
+            level = 0.95,
+            deff = TRUE,
+            na.rm = TRUE
+          )
+        )
+      ),
+      wt_pop = sum(srvyr::cur_svy_wts())
+    )
+  p
 }
 
 
@@ -87,4 +90,3 @@ compute_combined_prevalence <- function(df,
   }
   p
 }
-

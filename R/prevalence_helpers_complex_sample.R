@@ -1,41 +1,15 @@
 # Function to normalize/standardize scores -------------------------------------
 
-#'
-#' Normalize zscores to follow a normal distribution
-#'
-#' @description
-#'
-#' According to the [SMART Methodology.](https://smartmethodology.org/),
-#' when standard deviation of weight-for-height zscores is problematic,
-#' the acute malnutrition prevalence is re-calculated after normalizing the
-#' zscores to get a standard deviation of 1.0.
-#'
-#' `normalize_zscore()` helps to achieve this end by normalizing the zscores. It
-#' subtracts each element in a vector of zscores with the observed mean of the
-#' same vector and then divides by the observed standard deviation of the same
-#' vector.
-#'
-#' @param x A numeric (double) vector storing zscores (with a least 3 decimal
-#' places)
-#'
-#' @returns A numeric vector of the same length as the input vector
-#'
-#'
-normalize_zscore <- function(x) {
-
-  ## Get mean zscore ----
+normalize_prevalence <- function(x, .status = c("gam", "sam")) {
+  .status <- match.arg(.status)
   mean_x <- mean(remove_flags(x, "zscore"), na.rm = TRUE)
-  ## Get zscore's standard deviation ----
-  std_x <- sd(remove_flags(x, "zscore"), na.rm = TRUE)
-  ## Empty vector ----
-  norm_x <- numeric(length(x))
-  ## Normalize each element in x ----
-  for (i in seq_along(x)) {
-    norm_x[i] <- (x[i] - mean_x) / std_x
-  }
-  norm_x
+  ## Return GAM and SAM prevalence with a SD = 1
+  switch(
+    .status,
+    "gam" = {pnorm(q = -2, mean = mean_x, sd = 1, lower.tail = TRUE, log.p = FALSE)},
+    "sam" = {pnorm(q = -3, mean = mean_x, sd = 1, lower.tail = TRUE, log.p = FALSE)}
+  )
 }
-
 
 # Function to identify the type of treatment for prevalence --------------------
 #'
