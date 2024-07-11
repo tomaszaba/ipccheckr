@@ -23,8 +23,8 @@ the data was collected. If you are working on a single survey data, set
 }
 \value{
 A tibble. The length vary depending on .summary_by. If set to NULL, a tibble of
-1 x 16 is returned, otherwise, a tibble of n rowns (depending on the number of geographical
-areas in the dataset) x 17.
+1 x 16 is returned, otherwise, a tibble of n rows (depending on the number of geographical
+areas in the data set) x 17.
 }
 \description{
 \code{compute_wfhz_prevalence()} is a handy function designed to dynamically compute acute

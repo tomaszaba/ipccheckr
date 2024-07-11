@@ -1,36 +1,24 @@
-# Function to classify nutritional status  -------------------------------------
-
 #'
-#' A helper function to classify nutritional status into SAM, MAM or not wasted
+#' A helper function to tell how to go about MUAC prevalence analysis based on
+#' on the output of age ratio and standard deviation test results
 #'
-#' `classify_wasting_for_cdc_approach()` is used a helper inside
-#' [apply_cdc_age_weighting()] to classify nutritional status into "sam", "mam"
-#' or "not wasted" and then the vector returned is used downstream to calculate
-#' the proportions of children with severe and moderate acute malnutrition.
+#' @param age_ratio_class,sd_class Character vectors storing age ratio's p-values
+#' and standard deviation's classification, respectively.
 #'
-#' @param muac An integer vector containing MUAC values. They should be in
-#' millimeters.
-#'
-#' @param .edema Optional. Its a vector containing data on bilateral pitting
-#' edema coded as "y" for yes and "n" for no.
+#' @returns A character vector of the same length containing the indication of
+#' what to do for the MUAC prevalence analysis: "weighted", "unweighted" and
+#' "missing". If "weighted", the CDC weighting approach is applied to correct for
+#' age bias. If "unweighted" a normal complex sample analysis is applied, and for
+#' the latter, NA are thrown.
 #'
 #'
-classify_wasting_for_cdc_approach <- function(muac, .edema = NULL) {
-  if (!is.null(.edema)) {
-    #edema <- ifelse(edema == 1, "y", "n")
-    x <- case_when(
-      muac < 115 | {{ .edema }} == "y" ~ "sam",
-      muac >= 115 & muac < 125 & {{ .edema }} == "n" ~ "mam",
-      .default = "not wasted"
-    )
-  } else {
-    x <- case_when(
-      muac < 115 ~ "sam",
-      muac >= 115 & muac < 125 ~ "mam",
-      .default = "not wasted"
-    )
-  }
-  x
+tell_muac_analysis_strategy <- function(age_ratio_class, sd_class) {
+  case_when(
+    age_ratio_class == "Problematic" & sd_class != "Problematic" ~ "weighted",
+    age_ratio_class != "Problematic" & sd_class == "Problematic" ~ "missing",
+    age_ratio_class == "Problematic" & sd_class == "Problematic" ~ "missing",
+    .default = "unweighted"
+  )
 }
 
 # The CDC approach to correct for age bias in MUAC -----------------------------
@@ -99,18 +87,16 @@ compute_weighted_prevalence <- function(df, .edema=NULL, .summary_by = NULL) {
   if (!is.null(.summary_by)) {
     df <- df |>
       filter(.data$flag_mfaz == 0) |>
-      mutate(muac = recode_muac(.data$muac, unit = "mm")) |>
-      group_by(!!.summary_by) |>
+      #mutate(muac = recode_muac(.data$muac, unit = "cm")) |>
       summarise(
         sam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "sam"),
         mam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "mam"),
         gam = sum(.data$sam, .data$mam),
-        .groups = "drop"
+        .by = !!.summary_by
       ) |>
-      mutate(
-        gam_p = gam, sam_p = sam, mam_p = mam,
-        gam = NA, sam = NA, mam = NA
-      ) |> dplyr::select(!2:4)
+      dplyr::rename(
+        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam
+      )
   } else {
     df <- df |>
       filter(.data$flag_mfaz == 0) |>
@@ -120,10 +106,9 @@ compute_weighted_prevalence <- function(df, .edema=NULL, .summary_by = NULL) {
         mam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "mam"),
         gam = sum(.data$sam, .data$mam)
       ) |>
-      mutate(
-        gam_p = gam, sam_p = sam, mam_p = mam,
-        gam = NA, sam = NA, mam = NA
-      ) |> dplyr::select(!2:4)
+      dplyr::rename(
+        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam
+      )
   }
   df
 }
@@ -189,26 +174,28 @@ compute_muac_prevalence <- function(df,
 
   ## Get and classify age ratio and standard deviation ----
   if (!rlang::quo_is_null(.summary_by)) {
-    x <- group_by(df, !!.summary_by) |>
+    x <- df |>
+      group_by(!!.summary_by) |>
       summarise(
         age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
         std = classify_sd(sd(remove_flags(as.numeric(.data$mfaz), "zscore"), na.rm = TRUE)),
-        analysis_approach = tell_muac_analysis_strategy(age_ratio, std),
+        analysis_approach = tell_muac_analysis_strategy(.data$age_ratio, .data$std),
         .groups = "drop"
       )
   } else {
-    x <- summarise(
-      df,
-      age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
-      std = classify_sd(sd(remove_flags(as.numeric(.data$mfaz), "zscore"), na.rm = TRUE)),
-      analysis_approach = tell_muac_analysis_strategy(age_ratio, std)
-    )
+    x <- df |>
+      summarise(
+        age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
+        std = classify_sd(sd(remove_flags(as.numeric(.data$mfaz), "zscore"), na.rm = TRUE)),
+        analysis_approach = tell_muac_analysis_strategy(.data$age_ratio, .data$std)
+      )
   }
 
-  for (i in seq_along(nrow(x))) {
+  ## Iterate over data frame to compute prevalence according to analysis_approach ----
+  for (i in seq_len(nrow(x))) {
     if (!rlang::quo_is_null(.summary_by)) {
       area <- dplyr::pull(x, !!.summary_by)[i]
-      data <- filter(df, !!sym(rlang::quo_name(.summary_by)) == !!area)
+      data <- filter(df, !!sym(rlang::quo_name(.summary_by)) == area)
     } else {
       data <- df
     }
@@ -216,33 +203,45 @@ compute_muac_prevalence <- function(df,
     analysis_approach <- x$analysis_approach[i]
 
     if (analysis_approach == "unweighted") {
+      ### Compute standard complex sample based prevalence analysis ----
       output <- compute_pps_based_muac_prevalence(data, {{ .wt }}, {{ .edema }}, !!.summary_by)
     } else if (analysis_approach == "weighted") {
       if (!rlang::quo_is_null(.summary_by)) {
+        ### Compute weighted prevalence summarized at .summary_by ----
         output <- compute_weighted_prevalence(data, .edema = {{ .edema }}, !!.summary_by)
       } else {
+        ### Compute non-summarized weighted prevalence ----
         output <- compute_weighted_prevalence(data, .edema = {{ .edema }})
       }
     } else {
-      output <- tibble::tibble(
-        gam_n = NA,
-        sam_n = NA,
-        mam_n = NA,
-        gam_p = NA,
-        sam_p = NA,
-        mam_p = NA,
-        gam_p_low = NA,
-        gam_p_upp = NA,
-        sam_p_low = NA,
-        sam_p_upp = NA,
-        mam_p_low = NA,
-        mam_p_upp = NA,
-        gam_p_deff = NA,
-        sam_p_deff = NA,
-        mam_p_deff = NA
-      )
+      if (!rlang::quo_is_null(.summary_by)) {
+        ### Add NA's to the summarized tibble accordingly ----
+        output <- summarise(
+          data,
+          gam_p = NA_real_,
+          sam_p = NA_real_,
+          mam_p = NA_real_,
+          .by = !!.summary_by
+        )
+      } else {
+        ### Return a non-summarised tibble ----
+        output <- tibble::tibble(
+          gam_p = NA_real_,
+          sam_p = NA_real_,
+          mam_p = NA_real_
+        )
+      }
     }
     results[[i]] <- output
   }
-  dplyr::bind_rows(results)
+  ### Ensure that all geographical aras are added to the tibble ----
+  if (!rlang::quo_is_null(.summary_by)) {
+    results <- dplyr::bind_rows(results) |>
+      dplyr::relocate(.data$gam_p, .after = .data$gam_n) |>
+      dplyr::relocate(.data$sam_p, .after = .data$sam_n) |>
+      dplyr::relocate(.data$mam_p, .after = .data$mam_n)
+  } else {
+    results <- dplyr::bind_rows(results)
+  }
+  results
 }

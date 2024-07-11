@@ -12,7 +12,7 @@
 #'
 #' @param df A data frame object returned by [process_muac_data()] for
 #' `check_plausibility_mfaz()` and `check_plausibility_muac()` and returned by
-#' [process_whz_data()] for `check_plausibility_wfhz()`.
+#' [process_wfhz_data()] for `check_plausibility_wfhz()`.
 #'
 #' @param sex A vector telling whether a given child is a boy or girl.
 #'

@@ -73,9 +73,62 @@
 
 
 #'
-#' District level survey data with Standard Deviation classified as problematic
+#' District level SMART surveys conducted in four district in Mozambique
+#'
+#' @description
+#' This example data contains survey data of four districts. Two of them have their WFHZ
+#' standard deviation classified as problematic, and the are other two within range of
+#' acceptable standard deviation. The data is used to test the performance of WFHZ based
+#' prevalence when used on a data set with multiple survey areas that may or not have
+#' different classification for standard deviation that may warrant different analysis
+#' approach, as the function is designed for.
+#'
+#' @format A tibble of 943 x 9.
+#'
+#' |**Variable** | **Description** |
+#' | :--- | :---|
+#' | *district* | The administrative unit (admin 1) where data was collected. |
+#' | *cluster* | Primary sampling unit |
+#' | *team* | Survey teams |
+#' | *sex* | Sex, "m" = boys, "f" = girls |
+#' | *age* | calculated age in months with two decimal places |
+#' | *weight* | Weight (kg) |
+#' | *height* | Height (cm) |
+#' | *edema* | Edema, "n" = no, "y" = yes |
+#' | *muac* | Mid-upper arm circumference (mm) |
 #'
 "anthro.03"
+
+
+#'
+#' MUAC data from a community-based sentinel site from an anonymized location
+#'
+#' @description
+#' Data in `anthro.04` was generated from a community-based sentinel site of three provinces.
+#' Each province data set holds different scenarios that informs the appropriate analysis
+#' approach to follow. One province (province 3) has its MFAZ standard deviation and age
+#' ratio tests classified as problematic. Another province (province 2) has its age ratio
+#' classified as problematic, but with a within range standard deviation. Lastly, province 1
+#' has both tests falling within range of nor problematic. The data is used to test the
+#' performance of `[compute_muac_prevalence()]` based when used on a multiple survey areas
+#' data that may or not have on the aforementioned test that may then warrant a different
+#' analysis approach, as the function is designed for.
+#'
+#' @format A tibble of 3,002 x 8.
+#'
+#' |**Variable** | **Description** |
+#' | :--- | :---|
+#' | *province* |
+#' | *cluster* | Primary sampling unit |
+#' | *sex* | Sex, "m" = boys, "f" = girls |
+#' | *age* | calculated age in months with two decimal places |
+#' | *muac* | Mid-upper arm circumference (mm) |
+#' | *edema* | Edema, "n" = no, "y" = yes |
+#' | *mfaz* | MUAC-for-age z-scores with 3 decimal places |
+#' | *flag_mfaz* | Flagged observations. 1=flagged, 0=not flagged |
+#'
+"anthro.04"
+
 
 #'
 #' A SMART survey data with standard deviation on weight-for-height zscores

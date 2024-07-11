@@ -16,7 +16,7 @@ check_plausibility_muac(df, flags, sex, muac)
 \arguments{
 \item{df}{A data frame object returned by \code{\link[=process_muac_data]{process_muac_data()}} for
 \code{check_plausibility_mfaz()} and \code{check_plausibility_muac()} and returned by
-\code{\link[=process_whz_data]{process_whz_data()}} for \code{check_plausibility_wfhz()}.}
+\code{\link[=process_wfhz_data]{process_wfhz_data()}} for \code{check_plausibility_wfhz()}.}
 
 \item{sex}{A vector telling whether a given child is a boy or girl.}
 

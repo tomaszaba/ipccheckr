@@ -109,7 +109,7 @@ apply_probit_approach <- function(x, .status = c("gam", "sam")) {
 #' Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach.
 #'
 #' @description
-#' This function is a helper function inside the main fuction [compute_wfhz_prevalence()].
+#' This function is a helper function inside the main function [compute_wfhz_prevalence()].
 #' It is used to compute PROBIT based prevalence depending on the status of standard deviation.
 #'
 #' @param df A data frame object returned by [process_wfhz_data()]. this will contain the
@@ -131,11 +131,11 @@ compute_probit_prevalence <- function(df, .summary_by = NULL) {
       df,
       gam = apply_probit_approach(.data$wfhz, .status = "gam"),
       sam = apply_probit_approach(.data$wfhz, .status = "sam"),
-      mam = gam - sam,
+      mam = .data$gam - .data$sam,
       .by = !!.summary_by
       ) |>
       mutate(
-        gam_p = gam, sam_p = sam, mam_p = mam,
+        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
         gam = NA, sam = NA, mam = NA
       ) |>
       dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
@@ -144,10 +144,10 @@ compute_probit_prevalence <- function(df, .summary_by = NULL) {
       df,
       gam = apply_probit_approach(.data$wfhz, .status = "gam"),
       sam = apply_probit_approach(.data$wfhz, .status = "sam"),
-      mam = gam - sam
+      mam = .data$gam - .data$sam
       ) |>
       mutate(
-        gam_p = gam, sam_p = sam, mam_p = mam,
+        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
         gam = NA, sam = NA, mam = NA
       ) |>
       dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
@@ -183,8 +183,8 @@ compute_probit_prevalence <- function(df, .summary_by = NULL) {
 #' .summary_by = NULL (default).
 #'
 #' @returns A tibble. The length vary depending on .summary_by. If set to NULL, a tibble of
-#' 1 x 16 is returned, otherwise, a tibble of n rowns (depending on the number of geographical
-#' areas in the dataset) x 17.
+#' 1 x 16 is returned, otherwise, a tibble of n rows (depending on the number of geographical
+#' areas in the data set) x 17.
 #'
 #' @examples
 #'

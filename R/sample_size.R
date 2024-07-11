@@ -68,5 +68,5 @@ check_sample_size <- function(df,
         .default = "no"
     )
   )
-  dplyr::as_tibble(df)
+  tibble::as_tibble(df)
 }

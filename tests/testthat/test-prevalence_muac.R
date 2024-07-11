@@ -1,33 +1,29 @@
-
-### Test check: cdc_classify_wasting() with edema available ----
+### Test check: tell_muac_analysis_strategy() ----
 
 local({
-  #### Input data ----
-  muac_values <- c(
-    123, 129, 126, 113, 130, 122, 112, 124, 128,
-    121, 120, 110, 114, 125, 119, 127, 117, 118, 111, 115
-  )
-  edema <- c(
-    "n", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"
-    , "n", "n", "n", "y", "y", "n"
-  )
+  ### Input data ----
+  age_ratio_class_1 <- "Problematic"
+  age_ratio_class_2 <- "Good"
+  std_class_1 <- "Excellent"
+  std_class_2 <- "Problematic"
 
-  #### Expected results ----
-  expected <- c(
-    "mam", "not wasted", "sam", "sam", "not wasted", "mam", "sam", "mam",
-    "not wasted", "mam", "mam", "sam", "sam", "not wasted", "mam", "not wasted",
-    "mam", "sam", "sam", "mam"
-  )
+  ### Expected results ----
+  expected_1 <- "weighted"
+  expected_2 <- "missing"
+  expected_3 <- "unweighted"
 
-  #### Observed results ----
-  obs <- classify_wasting_for_cdc_approach(muac = muac_values, .edema = edema)
+  ### Observed results ----
+  obs_1 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_1)
+  obs_2 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_2)
+  obs_3 <- tell_muac_analysis_strategy(age_ratio_class_2, std_class_1)
 
-  #### The test ----
+  ### The test ----
   testthat::test_that(
-    "cdc_classify_wasting() does his job well",
+    "tell_muac_analysis_strategy() works",
     {
-      testthat::expect_vector(obs, ptype = "character", size = 20)
-      testthat::expect_equal(obs, expected)
+      testthat::expect_equal(obs_1, expected_1)
+      testthat::expect_equal(obs_2, expected_2)
+      testthat::expect_equal(obs_3, expected_3)
     }
   )
 })
@@ -168,7 +164,7 @@ local({
 
   #### Get the prevalence estimates ----
   p <- anthro.02 |>
-    compute_muac_prevalence(.edema = edema, .wt = "wtfactor")
+    compute_muac_prevalence(.edema = edema, .wt = "wtfactor", .summary_by = NULL)
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -216,7 +212,7 @@ local({
 
   #### Get the prevalence estimates ----
   p <- anthro.02 |>
-    compute_muac_prevalence(.edema = NULL, .wt = "wtfactor")
+    compute_muac_prevalence(.edema = NULL, .wt = "wtfactor", .summary_by = NULL)
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -266,7 +262,7 @@ local({
 
   ##### Get prevalence estimates ----
   p <- anthro.02 |>
-    compute_muac_prevalence(.edema = edema)
+    compute_muac_prevalence(.edema = edema, .summary_by = NULL)
 
   #### Expected results ----
   ##### GAM estimates and uncertainty ----
@@ -363,3 +359,40 @@ local({
     }
   )
 })
+
+
+### When !is.null(.summary_by) and analysis approach has different categories ----
+local({
+
+  ## Get the prevalence estimates ----
+  p <- anthro.04 |>
+    compute_muac_prevalence(.edema = edema, .summary_by = province)
+
+  ## Subset a province whose analysis approach is unweighted ---
+  province_1 <- subset(p, province == "Province 1")
+
+  ## Subset a province whose analysis approach is weighted ---
+  province_2 <- subset(p, province == "Province 2")
+
+  ## Subset a province whose analysis approach is add missing (NA's) ---
+  province_3 <- subset(p, province == "Province 3") |> dplyr::select(!province)
+
+  columns_to_check <- c("gam_n", "gam_p_low", "gam_p_upp", "sam_n",
+                        "sam_p_low", "sam_p_upp", "mam_n", "mam_p_low",
+                        "mam_p_upp", "wt_pop")
+
+  ## The test ----
+
+  testthat::test_that(
+    "compute_muac_prevalence() works well on a dataframe with multiple survey areas with
+    different categories on analysis_approach",
+    {
+      testthat::expect_vector(dplyr::select(p, !province), size = 3, ncol(17))
+      testthat::expect_s3_class(p, "tbl")
+      testthat::expect_false(all(sapply(province_1[columns_to_check], \(.) all(is.na(.)))))
+      testthat::expect_true(all(sapply(province_2[columns_to_check], \(.) all(is.na(.)))))
+      testthat::expect_true(all(sapply(province_3[names(province_3)], \(.) all(is.na(.)))))
+    }
+  )
+})
+

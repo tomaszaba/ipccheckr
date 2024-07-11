@@ -20,6 +20,6 @@ A tibble with the PROBIT based point prevalence for global, severe and moderate
 acute malnutrition.
 }
 \description{
-This function is a helper function inside the main fuction \code{\link[=compute_wfhz_prevalence]{compute_wfhz_prevalence()}}.
+This function is a helper function inside the main function \code{\link[=compute_wfhz_prevalence]{compute_wfhz_prevalence()}}.
 It is used to compute PROBIT based prevalence depending on the status of standard deviation.
 }

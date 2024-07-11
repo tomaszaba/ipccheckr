@@ -64,6 +64,7 @@ local({
     }
   )
 })
+
 ## Test check: define_wasting_cases_whz() ----
 ### With edema ----
 local({
@@ -208,36 +209,6 @@ local({
   )
 })
 
-### Test check: tell_muac_analysis_strategy() ----
-
-local({
-  ### Input data ----
-  age_ratio_class_1 <- "Problematic"
-  age_ratio_class_2 <- "Good"
-  std_class_1 <- "Excellent"
-  std_class_2 <- "Problematic"
-
-  ### Expected results ----
-  expected_1 <- "weighted"
-  expected_2 <- "missing"
-  expected_3 <- "unweighted"
-
-  ### Observed results ----
-  obs_1 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_1)
-  obs_2 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_2)
-  obs_3 <- tell_muac_analysis_strategy(age_ratio_class_2, std_class_1)
-
-  ### The test ----
-  testthat::test_that(
-    "tell_muac_analysis_strategy() works",
-    {
-      testthat::expect_equal(obs_1, expected_1)
-      testthat::expect_equal(obs_2, expected_2)
-      testthat::expect_equal(obs_3, expected_3)
-    }
-  )
-})
-
 
 ## Test check: define_wasting() ----
 ### Type set to "wfhz" ----
@@ -305,3 +276,36 @@ local(
     )
   }
 )
+
+### Test check: classify_wasting_for_cdc_approach with edema available ----
+
+local({
+  #### Input data ----
+  muac_values <- c(
+    123, 129, 126, 113, 130, 122, 112, 124, 128,
+    121, 120, 110, 114, 125, 119, 127, 117, 118, 111, 115
+  )
+  edema <- c(
+    "n", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"
+    , "n", "n", "n", "y", "y", "n"
+  )
+
+  #### Expected results ----
+  expected <- c(
+    "mam", "not wasted", "sam", "sam", "not wasted", "mam", "sam", "mam",
+    "not wasted", "mam", "mam", "sam", "sam", "not wasted", "mam", "not wasted",
+    "mam", "sam", "sam", "mam"
+  )
+
+  #### Observed results ----
+  obs <- classify_wasting_for_cdc_approach(muac = muac_values, .edema = edema)
+
+  #### The test ----
+  testthat::test_that(
+    "classify_wasting_for_cdc_approach does his job well",
+    {
+      testthat::expect_vector(obs, ptype = "character", size = 20)
+      testthat::expect_equal(obs, expected)
+    }
+  )
+})

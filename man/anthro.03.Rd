@@ -3,14 +3,30 @@
 \docType{data}
 \name{anthro.03}
 \alias{anthro.03}
-\title{District level survey data with Standard Deviation classified as problematic}
+\title{District level SMART surveys conducted in four district in Mozambique}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 943 rows and 11 columns.
+A tibble of 943 x 9.\tabular{ll}{
+   \strong{Variable} \tab \strong{Description} \cr
+   \emph{district} \tab The administrative unit (admin 1) where data was collected. \cr
+   \emph{cluster} \tab Primary sampling unit \cr
+   \emph{team} \tab Survey teams \cr
+   \emph{sex} \tab Sex, "m" = boys, "f" = girls \cr
+   \emph{age} \tab calculated age in months with two decimal places \cr
+   \emph{weight} \tab Weight (kg) \cr
+   \emph{height} \tab Height (cm) \cr
+   \emph{edema} \tab Edema, "n" = no, "y" = yes \cr
+   \emph{muac} \tab Mid-upper arm circumference (mm) \cr
+}
 }
 \usage{
 anthro.03
 }
 \description{
-District level survey data with Standard Deviation classified as problematic
+This example data contains survey data of four districts. Two of them have their WFHZ
+standard deviation classified as problematic, and the are other two within range of
+acceptable standard deviation. The data is used to test the performance of WFHZ based
+prevalence when used on a data set with multiple survey areas that may or not have
+different classification for standard deviation that may warrant different analysis
+approach, as the function is designed for.
 }
 \keyword{datasets}
