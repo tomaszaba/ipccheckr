@@ -93,31 +93,48 @@ apply_cdc_age_weighting <- function(muac, age,
 #'
 #'
 #'
-compute_weighted_prevalence <- function(df, .edema=NULL) {
-  df |>
-    filter(.data$flag_mfaz == 0) |>
-    mutate(muac = recode_muac(.data$muac, unit = "mm")) |>
-    summarise(
-      sam = apply_cdc_age_weighting(
-        muac = .data$muac,
-        age = .data$age,
-        .edema = {{ .edema }},
-        status = "sam"
-      ),
-      mam = apply_cdc_age_weighting(
-        muac = .data$muac,
-        age = .data$age,
-        .edema = {{ .edema }},
-        status = "mam"
-      ),
-      gam = sum(.data$sam, .data$mam)
-    )
+compute_weighted_prevalence <- function(df, .edema=NULL, .summary_by = NULL) {
+  .summary_by <- rlang::enquo(.summary_by)
+
+  if (!is.null(.summary_by)) {
+    df <- df |>
+      filter(.data$flag_mfaz == 0) |>
+      mutate(muac = recode_muac(.data$muac, unit = "mm")) |>
+      group_by(!!.summary_by) |>
+      summarise(
+        sam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "sam"),
+        mam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "mam"),
+        gam = sum(.data$sam, .data$mam),
+        .groups = "drop"
+      ) |>
+      mutate(
+        gam_p = gam, sam_p = sam, mam_p = mam,
+        gam = NA, sam = NA, mam = NA
+      ) |> dplyr::select(!2:4)
+  } else {
+    df <- df |>
+      filter(.data$flag_mfaz == 0) |>
+      mutate(muac = recode_muac(.data$muac, unit = "mm")) |>
+      summarise(
+        sam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "sam"),
+        mam = apply_cdc_age_weighting(.data$muac, .data$age, {{ .edema }}, status = "mam"),
+        gam = sum(.data$sam, .data$mam)
+      ) |>
+      mutate(
+        gam_p = gam, sam_p = sam, mam_p = mam,
+        gam = NA, sam = NA, mam = NA
+      ) |> dplyr::select(!2:4)
+  }
+  df
 }
 
 #'
 #'
 #'
-get_muac_prevalence_estimates <- function(df, .wt=NULL, .edema=NULL, .summary_by) {
+compute_pps_based_muac_prevalence <- function(df,
+                                          .wt=NULL,
+                                          .edema=NULL,
+                                          .summary_by = NULL) {
   df <- df |>
     define_wasting(muac = .data$muac, edema = {{ .edema }}, base = "muac")
 
@@ -163,33 +180,69 @@ get_muac_prevalence_estimates <- function(df, .wt=NULL, .edema=NULL, .summary_by
 
 
 #'
-#'
-#'
-compute_muac_prevalence <- function(df, .wt = NULL, .edema = NULL, .summary_by) {
+compute_muac_prevalence <- function(df,
+                                    .wt = NULL,
+                                    .edema = NULL,
+                                    .summary_by = NULL) {
+  .summary_by <- rlang::enquo(.summary_by)
+  results <- list()
+
   ## Get and classify age ratio and standard deviation ----
-  a <- df[["age"]]
-  age_ratio <- classify_age_sex_ratio(age_ratio_test(a, .expectedP = 0.66)$p)
-  zs <- df[["mfaz"]]
-  std <- classify_sd(sd(remove_flags(as.numeric(zs), "zscore"), na.rm = TRUE))
-
-  ## Check the appropriate analysis strategy to follow ----
-  muac_analysis <- tell_muac_analysis_strategy(age_ratio, std)
-
-  if (muac_analysis == "unweighted") {
-    p <- df |>
-      get_muac_prevalence_estimates(
-        .wt = {{ .wt }},
-        .summary_by = {{ .summary_by }},
-        .edema = {{ .edema }}
+  if (!rlang::quo_is_null(.summary_by)) {
+    x <- group_by(df, !!.summary_by) |>
+      summarise(
+        age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
+        std = classify_sd(sd(remove_flags(as.numeric(.data$mfaz), "zscore"), na.rm = TRUE)),
+        analysis_approach = tell_muac_analysis_strategy(age_ratio, std),
+        .groups = "drop"
       )
+  } else {
+    x <- summarise(
+      df,
+      age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
+      std = classify_sd(sd(remove_flags(as.numeric(.data$mfaz), "zscore"), na.rm = TRUE)),
+      analysis_approach = tell_muac_analysis_strategy(age_ratio, std)
+    )
   }
-  if (muac_analysis == "weighted") {
-    p <- df |>
-      group_by({{ .summary_by }}) |>
-      compute_weighted_prevalence(.edema = {{ .edema }})
+
+  for (i in seq_along(nrow(x))) {
+    if (!rlang::quo_is_null(.summary_by)) {
+      area <- dplyr::pull(x, !!.summary_by)[i]
+      data <- filter(df, !!sym(rlang::quo_name(.summary_by)) == !!area)
+    } else {
+      data <- df
+    }
+
+    analysis_approach <- x$analysis_approach[i]
+
+    if (analysis_approach == "unweighted") {
+      output <- compute_pps_based_muac_prevalence(data, {{ .wt }}, {{ .edema }}, !!.summary_by)
+    } else if (analysis_approach == "weighted") {
+      if (!rlang::quo_is_null(.summary_by)) {
+        output <- compute_weighted_prevalence(data, .edema = {{ .edema }}, !!.summary_by)
+      } else {
+        output <- compute_weighted_prevalence(data, .edema = {{ .edema }})
+      }
+    } else {
+      output <- tibble::tibble(
+        gam_n = NA,
+        sam_n = NA,
+        mam_n = NA,
+        gam_p = NA,
+        sam_p = NA,
+        mam_p = NA,
+        gam_p_low = NA,
+        gam_p_upp = NA,
+        sam_p_low = NA,
+        sam_p_upp = NA,
+        mam_p_low = NA,
+        mam_p_upp = NA,
+        gam_p_deff = NA,
+        sam_p_deff = NA,
+        mam_p_deff = NA
+      )
+    }
+    results[[i]] <- output
   }
-  if (muac_analysis == "missing") {
-    p <- NA_real_
-  }
-  p
+  dplyr::bind_rows(results)
 }

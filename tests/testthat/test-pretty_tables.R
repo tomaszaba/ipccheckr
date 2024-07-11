@@ -98,13 +98,13 @@ local(
         birdate = "dob",
         age = age
       ) |>
-      process_whz_data(
+      process_wfhz_data(
         sex = sex,
         weight = weight,
         height = height,
         .recode_sex = TRUE
       ) |>
-      check_plausibility_whz(
+      check_plausibility_wfhz(
         flags = flag_wfhz,
         sex = sex,
         age = age,
@@ -112,7 +112,7 @@ local(
         height = height,
         area = area
       ) |>
-      generate_pretty_table_whz()
+      generate_pretty_table_wfhz()
 
     ### The test ----
     testthat::test_that(

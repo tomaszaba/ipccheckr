@@ -264,7 +264,7 @@ process_muac_data <- function(df,
         flag_muac = do.call(flag_outliers, list({{ muac }}, type = "crude"))
       )
   }
-  dplyr::as_tibble(df)
+  tibble::as_tibble(df)
 }
 
 
@@ -273,7 +273,7 @@ process_muac_data <- function(df,
 #'
 #' Process Weight-for-Height data get it ready for analyses
 #'
-#' `process_whz_data()` gets your input data ready for downstream WHZ related
+#' `process_wfhz_data()` gets your input data ready for downstream WHZ related
 #' analysis.
 #'
 #' @param df The input data frame with variables sex, age and MUAC.
@@ -284,7 +284,7 @@ process_muac_data <- function(df,
 #' values in centimeters, respectively.
 #'
 #' @param .recode_sex Logical. It asks whether you should recode your sex variable
-#' to the required shape to use in `process_whz_data()`. The default values for
+#' to the required shape to use in `process_wfhz_data()`. The default values for
 #' sex are 1 = boys and 2 = girls. Setting `.recode_sex = TRUE` works on "m"
 #' and "f" values. If your vector is in any different shape, you should put it in
 #' "m" and "f" or right away to 1 or 2. If you are using data exported from ENA for
@@ -298,7 +298,7 @@ process_muac_data <- function(df,
 #' @examples
 #' ## Have a sample data ----
 #' anthro.01 |>
-#' process_whz_data(
+#' process_wfhz_data(
 #' sex = sex,
 #' weight = weight,
 #' height = height,
@@ -307,7 +307,7 @@ process_muac_data <- function(df,
 #'
 #' @export
 #'
-process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
+process_wfhz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
 
   recode_sex <- quote(
     if (.recode_sex) {
@@ -331,5 +331,5 @@ process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
     mutate(
       flag_wfhz = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
     )
-  dplyr::as_tibble(df)
+  tibble::as_tibble(df)
 }

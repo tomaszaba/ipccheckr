@@ -215,7 +215,7 @@ local(
 local(
   {
     df <- anthro.01 |>
-      process_whz_data(
+      process_wfhz_data(
         sex = sex,
         weight = weight,
         height = height,

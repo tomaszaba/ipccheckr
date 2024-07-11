@@ -71,6 +71,12 @@
 #'
 "anthro.02"
 
+
+#'
+#' District level survey data with Standard Deviation classified as problematic
+#'
+"anthro.03"
+
 #'
 #' A SMART survey data with standard deviation on weight-for-height zscores
 #' classified as problematic

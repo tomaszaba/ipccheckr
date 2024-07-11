@@ -60,13 +60,13 @@ local(
         birdate = "dob",
         age = age
       ) |>
-      process_whz_data(
+      process_wfhz_data(
         sex = sex,
         weight = weight,
         height = height,
         .recode_sex = TRUE
       ) |>
-      check_plausibility_whz(
+      check_plausibility_wfhz(
         sex = sex,
         age = age,
         weight = weight,

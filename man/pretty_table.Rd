@@ -2,19 +2,19 @@
 % Please edit documentation in R/pretty_tables.R
 \name{generate_pretty_table_mfaz}
 \alias{generate_pretty_table_mfaz}
-\alias{generate_pretty_table_whz}
+\alias{generate_pretty_table_wfhz}
 \alias{generate_pretty_table_muac}
 \title{Get a prettified formatted and presentable output table}
 \usage{
 generate_pretty_table_mfaz(df)
 
-generate_pretty_table_whz(df)
+generate_pretty_table_wfhz(df)
 
 generate_pretty_table_muac(df)
 }
 \arguments{
 \item{df}{An output data frame returned by \code{\link[=check_plausibility_mfaz]{check_plausibility_mfaz()}},
-\code{\link[=check_plausibility_whz]{check_plausibility_whz()}} or \code{\link[=check_plausibility_muac]{check_plausibility_muac()}}.}
+\code{\link[=check_plausibility_wfhz]{check_plausibility_wfhz()}} or \code{\link[=check_plausibility_muac]{check_plausibility_muac()}}.}
 }
 \value{
 An output data frame of the same size as the input, but with values
@@ -24,12 +24,12 @@ formatted, columns renamed, and ready to share.
 You may want to share the plausibility report in a table. You usually care for
 a well formatted and pretty table, with values rounded, scientific notations
 converted into conventional notations, etc. \code{generate_pretty_table_mfaz()},
-\code{generate_pretty_table_whz()} and \code{generate_pretty_table_muac()} does that
+\code{generate_pretty_table_wfhz()} and \code{generate_pretty_table_muac()} does that
 for you so you already.
 }
 \examples{
 
-## Plausibility check on MUAC-for-age zscores ----
+## Plausibility check on MFAZ ----
 
 anthro.01 |>
 process_age(
@@ -72,14 +72,24 @@ muac = muac
 ) |>
 generate_pretty_table_muac()
 
-## Plausibility check on weight-for-height zscores ----
+## Plausibility check on WFHZ ----
 
 anthro.01 |>
-process_whz_data(
+process_wfhz_data(
 sex = sex,
 weight = weight,
 height = height,
 .recode_sex = TRUE
-)
+) |>
+check_plausibility_wfhz(
+sex = sex,
+age = age,
+weight = weight,
+height = height,
+flags = flag_wfhz,
+area = area
+) |>
+generate_pretty_table_wfhz()
+
 
 }

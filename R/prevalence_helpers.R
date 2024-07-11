@@ -1,15 +1,4 @@
-# Function to normalize/standardize scores -------------------------------------
 
-normalize_prevalence <- function(x, .status = c("gam", "sam")) {
-  .status <- match.arg(.status)
-  mean_x <- mean(remove_flags(x, "zscore"), na.rm = TRUE)
-  ## Return GAM and SAM prevalence with a SD = 1
-  switch(
-    .status,
-    "gam" = {pnorm(q = -2, mean = mean_x, sd = 1, lower.tail = TRUE, log.p = FALSE)},
-    "sam" = {pnorm(q = -3, mean = mean_x, sd = 1, lower.tail = TRUE, log.p = FALSE)}
-  )
-}
 
 # Function to identify the type of treatment for prevalence --------------------
 #'

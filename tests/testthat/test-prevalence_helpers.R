@@ -208,35 +208,6 @@ local({
   )
 })
 
-### Test check: normalize_zscores() -----
-
-local({
-  #### Input data ----
-  zscores <- seq(-4.321, 1.123, 0.02)
-
-  #### Mean and standard deviation of observed zscores (the input data) ----
-  obs_mean_z <- mean(zscores)
-  obs_std_z <- sd(zscores)
-
-  #### Normalize zscores ----
-  norm_zscores <- normalize_zscore(zscores)
-
-  #### Mean and standard deviation of normalized zscores -----
-  norm_mean_z <- mean(norm_zscores)
-  norm_std_z <- sd(norm_zscores)
-
-  #### The test ----
-  testthat::test_that(
-    "normalize_score() works as expected",
-    {
-      testthat::expect_error(expect_equal(norm_mean_z, obs_mean_z))
-      testthat::expect_error(expect_equal(norm_std_z, obs_std_z))
-      testthat::expect_equal(norm_mean_z, 0)
-      testthat::expect_equal(norm_std_z, 1)
-    }
-  )
-})
-
 ### Test check: tell_muac_analysis_strategy() ----
 
 local({
