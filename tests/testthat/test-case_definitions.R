@@ -64,6 +64,7 @@ local({
     }
   )
 })
+
 ## Test check: define_wasting_cases_whz() ----
 ### With edema ----
 local({
@@ -208,72 +209,13 @@ local({
   )
 })
 
-### Test check: normalize_zscores() -----
-
-local({
-  #### Input data ----
-  zscores <- seq(-4.321, 1.123, 0.02)
-
-  #### Mean and standard deviation of observed zscores (the input data) ----
-  obs_mean_z <- mean(zscores)
-  obs_std_z <- sd(zscores)
-
-  #### Normalize zscores ----
-  norm_zscores <- normalize_zscore(zscores)
-
-  #### Mean and standard deviation of normalized zscores -----
-  norm_mean_z <- mean(norm_zscores)
-  norm_std_z <- sd(norm_zscores)
-
-  #### The test ----
-  testthat::test_that(
-    "normalize_score() works as expected",
-    {
-      testthat::expect_error(expect_equal(norm_mean_z, obs_mean_z))
-      testthat::expect_error(expect_equal(norm_std_z, obs_std_z))
-      testthat::expect_equal(norm_mean_z, 0)
-      testthat::expect_equal(norm_std_z, 1)
-    }
-  )
-})
-
-### Test check: tell_muac_analysis_strategy() ----
-
-local({
-  ### Input data ----
-  age_ratio_class_1 <- "Problematic"
-  age_ratio_class_2 <- "Good"
-  std_class_1 <- "Excellent"
-  std_class_2 <- "Problematic"
-
-  ### Expected results ----
-  expected_1 <- "weighted"
-  expected_2 <- "missing"
-  expected_3 <- "unweighted"
-
-  ### Observed results ----
-  obs_1 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_1)
-  obs_2 <- tell_muac_analysis_strategy(age_ratio_class_1, std_class_2)
-  obs_3 <- tell_muac_analysis_strategy(age_ratio_class_2, std_class_1)
-
-  ### The test ----
-  testthat::test_that(
-    "tell_muac_analysis_strategy() works",
-    {
-      testthat::expect_equal(obs_1, expected_1)
-      testthat::expect_equal(obs_2, expected_2)
-      testthat::expect_equal(obs_3, expected_3)
-    }
-  )
-})
-
 
 ## Test check: define_wasting() ----
 ### Type set to "wfhz" ----
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- wfhz.01 |>
       define_wasting(wfhz, edema, base = "wfhz") |>
       dplyr::select(gam, sam, mam)
 
@@ -283,9 +225,9 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("gam", "sam", "mam"))
-        testthat::expect_vector(x$gam, size = 7740)
-        testthat::expect_vector(x$sam, size = 7740)
-        testthat::expect_vector(x$mam, size = 7740)
+        testthat::expect_vector(x$gam, size = 303)
+        testthat::expect_vector(x$sam, size = 303)
+        testthat::expect_vector(x$mam, size = 303)
       }
     )
   }
@@ -295,7 +237,7 @@ local(
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- mfaz.02 |>
       define_wasting(muac = muac, edema = edema, base = "muac") |>
       dplyr::select(gam, sam, mam)
 
@@ -305,9 +247,9 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("gam", "sam", "mam"))
-        testthat::expect_vector(x$gam, size = 7740)
-        testthat::expect_vector(x$sam, size = 7740)
-        testthat::expect_vector(x$mam, size = 7740)
+        testthat::expect_vector(x$gam, size = 303)
+        testthat::expect_vector(x$sam, size = 303)
+        testthat::expect_vector(x$mam, size = 303)
       }
     )
   }
@@ -317,7 +259,7 @@ local(
 local(
   {
     #### Input data ----
-    x <- prev_data |>
+    x <- anthro.02 |>
       define_wasting(wfhz, muac, edema, base = "combined") |>
       dplyr::select(cgam, csam, cmam)
 
@@ -327,10 +269,43 @@ local(
       {
         testthat::expect_s3_class(x, "data.frame")
         testthat::expect_named(x, c("cgam", "csam", "cmam"))
-        testthat::expect_vector(x$cgam, size = 7740)
-        testthat::expect_vector(x$csam, size = 7740)
-        testthat::expect_vector(x$cmam, size = 7740)
+        testthat::expect_vector(x$cgam, size = 2267)
+        testthat::expect_vector(x$csam, size = 2267)
+        testthat::expect_vector(x$cmam, size = 2267)
       }
     )
   }
 )
+
+### Test check: classify_wasting_for_cdc_approach with edema available ----
+
+local({
+  #### Input data ----
+  muac_values <- c(
+    123, 129, 126, 113, 130, 122, 112, 124, 128,
+    121, 120, 110, 114, 125, 119, 127, 117, 118, 111, 115
+  )
+  edema <- c(
+    "n", "n", "y", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"
+    , "n", "n", "n", "y", "y", "n"
+  )
+
+  #### Expected results ----
+  expected <- c(
+    "mam", "not wasted", "sam", "sam", "not wasted", "mam", "sam", "mam",
+    "not wasted", "mam", "mam", "sam", "sam", "not wasted", "mam", "not wasted",
+    "mam", "sam", "sam", "mam"
+  )
+
+  #### Observed results ----
+  obs <- classify_wasting_for_cdc_approach(muac = muac_values, .edema = edema)
+
+  #### The test ----
+  testthat::test_that(
+    "classify_wasting_for_cdc_approach does his job well",
+    {
+      testthat::expect_vector(obs, ptype = "character", size = 20)
+      testthat::expect_equal(obs, expected)
+    }
+  )
+})

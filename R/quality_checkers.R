@@ -1,17 +1,18 @@
 #'
-#' Plausibility checkers: MUAC-for-age zscores, Weight-for-Height zscores and
+#' Plausibility checkers: MUAC-for-age z-scores, Weight-for-Height z-scores and
 #' MUAC
 #'
-#' `check_plausibility_mfaz()`, `check_plausibility_whz()` and
+#' @description
+#' `check_plausibility_mfaz()`, `check_plausibility_wfhz()` and
 #' `check_plausibility_muac()` lets you know the quality of your data, based on
 #' the statistics around MUAC-for-age zscores, weight-for-height z-scores and on
-#' crude MUAC, respectively. Note that `check_plausibility_whz()` is all about
+#' crude MUAC, respectively. Note that `check_plausibility_wfhz()` is all about
 #' WHZ only. If you wish to know about MUAC checks consider using either
 #' `check_plausibility_mfaz()` or `check_plausibility_muac()`
 #'
 #' @param df A data frame object returned by [process_muac_data()] for
 #' `check_plausibility_mfaz()` and `check_plausibility_muac()` and returned by
-#' [process_whz_data()] for `check_plausibility_whz()`.
+#' [process_wfhz_data()] for `check_plausibility_wfhz()`.
 #'
 #' @param sex A vector telling whether a given child is a boy or girl.
 #'
@@ -28,7 +29,7 @@
 #'
 #' @param area A vector with values on where was the data collected. If you are
 #' analyzing a data set with just one area, provide it anyway to
-#' `check_plausibility_mfaz()` or `check_plausibility_whz()`
+#' `check_plausibility_mfaz()` or `check_plausibility_wfhz()`
 #'
 #' @returns A summarized data frame containing quality checks statistics and
 #' respective classification.
@@ -38,7 +39,7 @@
 #'
 #' ## Check Plausibility: MFAZ ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_age(
 #' svdate = "dos",
 #' birdate = "dob",
@@ -53,39 +54,39 @@
 #' unit = "cm"
 #' ) |>
 #' check_plausibility_mfaz(
-#' flags = flags,
+#' flags = flag_mfaz,
 #' sex = sex,
 #' muac = muac,
 #' age = age,
 #' area = area
 #' )
 #'
-#' ## Check Plausibility: WHZ ----
+#' ## Check Plausibility: WFHZ ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_age(
 #' svdate = "dos",
 #' birdate = "dob",
 #' age = age
 #' ) |>
-#' process_whz_data(
+#' process_wfhz_data(
 #' sex = sex,
 #' weight = weight,
 #' height = height,
 #' .recode_sex = TRUE
 #' ) |>
-#' check_plausibility_whz(
-#' flags = flags,
+#' check_plausibility_wfhz(
 #' sex = sex,
 #' age = age,
 #' weight = weight,
 #' height = height,
+#' flags = flag_wfhz,
 #' area = area
 #' )
 #'
 #' ## Check Plausibility: MUAC ----
 #'
-#' anthro_data |>
+#' anthro.01 |>
 #' process_muac_data(
 #' sex = sex,
 #' muac = muac,
@@ -95,7 +96,7 @@
 #' unit = "none"
 #' ) |>
 #' check_plausibility_muac(
-#' flags = flags,
+#' flags = flag_muac,
 #' sex = sex,
 #' muac = muac
 #' )
@@ -151,7 +152,7 @@ check_plausibility_mfaz <- function(df, sex, muac, age, flags, area) {
 #'
 #' @export
 #'
-check_plausibility_whz <- function(df, sex, age, weight, height, flags, area) {
+check_plausibility_wfhz <- function(df, sex, age, weight, height, flags, area) {
 
 
   ## Summarise statistics  ----

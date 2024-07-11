@@ -3,18 +3,20 @@
 #' You may want to share the plausibility report in a table. You usually care for
 #' a well formatted and pretty table, with values rounded, scientific notations
 #' converted into conventional notations, etc. `generate_pretty_table_mfaz()`,
-#' `generate_pretty_table_whz()` and `generate_pretty_table_muac()` does that
+#' `generate_pretty_table_wfhz()` and `generate_pretty_table_muac()` does that
 #' for you so you already.
 #'
 #' @param df An output data frame returned by [check_plausibility_mfaz()],
-#' [check_plausibility_whz()] or [check_plausibility_muac()].
+#' [check_plausibility_wfhz()] or [check_plausibility_muac()].
 #'
 #' @returns An output data frame of the same size as the input, but with values
 #' formatted, columns renamed, and ready to share.
 #'
 #' @examples
 #'
-#' anthro_data |>
+#' ## Plausibility check on MFAZ ----
+#'
+#' anthro.01 |>
 #' process_age(
 #' svdate = "dos",
 #' birdate = "dob",
@@ -29,7 +31,7 @@
 #' unit = "cm"
 #' ) |>
 #' check_plausibility_mfaz(
-#' flags = flags,
+#' flags = flag_mfaz,
 #' sex = sex,
 #' muac = muac,
 #' age = age,
@@ -37,7 +39,9 @@
 #' ) |>
 #' generate_pretty_table_mfaz()
 #'
-#' anthro_data |>
+#' ## Plausibility check on absolute MUAC ----
+#'
+#' anthro.01 |>
 #' process_muac_data(
 #' sex = sex,
 #' muac = muac,
@@ -47,11 +51,31 @@
 #' unit = "none"
 #' ) |>
 #' check_plausibility_muac(
-#' flags = flags,
+#' flags = flag_muac,
 #' sex = sex,
 #' muac = muac
 #' ) |>
 #' generate_pretty_table_muac()
+#'
+#' ## Plausibility check on WFHZ ----
+#'
+#' anthro.01 |>
+#' process_wfhz_data(
+#' sex = sex,
+#' weight = weight,
+#' height = height,
+#' .recode_sex = TRUE
+#' ) |>
+#' check_plausibility_wfhz(
+#' sex = sex,
+#' age = age,
+#' weight = weight,
+#' height = height,
+#' flags = flag_wfhz,
+#' area = area
+#' ) |>
+#' generate_pretty_table_wfhz()
+#'
 #'
 #' @rdname pretty_table
 #'
@@ -96,7 +120,7 @@ generate_pretty_table_mfaz <- function(df) {
 #' @export
 #'
 #'
-generate_pretty_table_whz <- function(df) {
+generate_pretty_table_wfhz <- function(df) {
 
   ## Format data frame ----
     df <- df |>

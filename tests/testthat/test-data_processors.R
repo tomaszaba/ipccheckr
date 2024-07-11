@@ -59,7 +59,7 @@ local(
 ### Test check: remove_flags() with method set to "mfaz"----
 local({
   #### Observed results ----
-  processed_df <- anthro_data |>
+  processed_df <- anthro.01 |>
     process_age(
       svdate = "dos",
       birdate = "dob",
@@ -82,7 +82,7 @@ local({
     {
       with(
         processed_df,
-        testthat::expect_length(processed_df[["not_flag"]], 7740)
+        testthat::expect_length(processed_df[["not_flag"]], 1191)
       )
     }
   )
@@ -91,7 +91,7 @@ local({
 ### Test check: remove_flags() with method set to "crude"----
 local({
   #### Observed results ----
-  processed_df <- anthro_data |>
+  processed_df <- anthro.01 |>
     process_age(
       svdate = "dos",
       birdate = "dob",
@@ -113,7 +113,7 @@ local({
     {
       with(
         processed_df,
-        testthat::expect_length(processed_df[["not_flag"]], 7740)
+        testthat::expect_length(processed_df[["not_flag"]], 1191)
       )
     }
   )
@@ -204,9 +204,33 @@ local(
       "process_muac_data() works well",
       {
         testthat::expect_vector(df[["mfaz"]], size = 15)
-        testthat::expect_vector(df[["flags"]], size = 15)
+        testthat::expect_vector(df[["flag_mfaz"]], size = 15)
         testthat::expect_equal(df[["mfaz"]], expected_results)
       }
     )
+  }
+)
+
+### Test check: process_wfhz_data() ----
+local(
+  {
+    df <- anthro.01 |>
+      process_wfhz_data(
+        sex = sex,
+        weight = weight,
+        height = height,
+        .recode_sex = TRUE
+      )
+
+    #### The Test ----
+    testthat::test_that(
+      "process_wfhz_data() works as designed",
+      {
+        testthat::expect_vector(df[["wfhz"]], size = 1191)
+        testthat::expect_vector(df[["flag_wfhz"]], size = 1191)
+        testthat::expect_vector(is.numeric(df[["mfaz"]]))
+      }
+    )
+
   }
 )

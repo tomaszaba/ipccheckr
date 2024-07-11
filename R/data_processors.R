@@ -154,10 +154,13 @@ recode_muac <- function(muac, unit = c("cm", "mm")) {
 #' @param df The input data frame with variables sex, age and MUAC.
 #'
 #' @param sex A vector storing values about whether the child is a boy or a girl.
+#' The variable name must be named sex, otherwise it will not work.
 #'
 #' @param muac A vector storing crude MUAC values.
 #'
-#' @param age A vector storing values about child's age in months.
+#' @param age A vector storing values about child's age in months. The variable
+#' name must be named age, otherwise it will not work. For instance, if given as
+#' following: age = months it will not work.
 #'
 #' @param .recode_sex Logical. It asks whether you should recode your sex variable
 #' to the required shape to use in `process_muac_data()`. The default values for
@@ -252,16 +255,16 @@ process_muac_data <- function(df,
         digits = 3
       )|>
       mutate(
-        flags = do.call(flag_outliers, list(.data$mfaz, type = "zscore"))
+        flag_mfaz = do.call(flag_outliers, list(.data$mfaz, type = "zscore"))
       )
   } else {
     df <- df |>
       mutate(
         sex = !!recode_sex,
-        flags = do.call(flag_outliers, list({{ muac }}, type = "crude"))
+        flag_muac = do.call(flag_outliers, list({{ muac }}, type = "crude"))
       )
   }
-  dplyr::as_tibble(df)
+  tibble::as_tibble(df)
 }
 
 
@@ -270,7 +273,7 @@ process_muac_data <- function(df,
 #'
 #' Process Weight-for-Height data get it ready for analyses
 #'
-#' `process_whz_data()` gets your input data ready for downstream WHZ related
+#' `process_wfhz_data()` gets your input data ready for downstream WHZ related
 #' analysis.
 #'
 #' @param df The input data frame with variables sex, age and MUAC.
@@ -281,7 +284,7 @@ process_muac_data <- function(df,
 #' values in centimeters, respectively.
 #'
 #' @param .recode_sex Logical. It asks whether you should recode your sex variable
-#' to the required shape to use in `process_whz_data()`. The default values for
+#' to the required shape to use in `process_wfhz_data()`. The default values for
 #' sex are 1 = boys and 2 = girls. Setting `.recode_sex = TRUE` works on "m"
 #' and "f" values. If your vector is in any different shape, you should put it in
 #' "m" and "f" or right away to 1 or 2. If you are using data exported from ENA for
@@ -294,8 +297,8 @@ process_muac_data <- function(df,
 #'
 #' @examples
 #' ## Have a sample data ----
-#' anthro_data |>
-#' process_whz_data(
+#' anthro.01 |>
+#' process_wfhz_data(
 #' sex = sex,
 #' weight = weight,
 #' height = height,
@@ -304,7 +307,7 @@ process_muac_data <- function(df,
 #'
 #' @export
 #'
-process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
+process_wfhz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
 
   recode_sex <- quote(
     if (.recode_sex) {
@@ -319,14 +322,14 @@ process_whz_data <- function(df, sex, weight, height, .recode_sex = TRUE) {
       sex = !!recode_sex
     ) |>
     addWGSR(
-      sex = "sex",
-      firstPart = "weight",
-      secondPart = "height",
+      sex = {{ "sex" }},
+      firstPart = {{ "weight" }},
+      secondPart = {{ "height" }},
       index = "wfh",
       digits = 3
     ) |>
     mutate(
-      flags = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
+      flag_wfhz = do.call(flag_outliers, list(.data$wfhz, type = "zscore"))
     )
-  dplyr::as_tibble(df)
+  tibble::as_tibble(df)
 }

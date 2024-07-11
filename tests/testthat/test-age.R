@@ -110,7 +110,7 @@ local(
 local(
   {
     #### Observed results ----
-    obsrv <- age_ratio_test(anthro_data[["age"]], .expectedP = 0.66)
+    obsrv <- age_ratio_test(anthro.01[["age"]], .expectedP = 0.66)
 
     #### The test ----
     testthat::test_that(

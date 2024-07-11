@@ -1,69 +1,3 @@
-# Function to normalize/standardize scores -------------------------------------
-
-#'
-#' Normalize zscores to follow a normal distribution
-#'
-#' @description
-#'
-#' According to the [SMART Methodology.](https://smartmethodology.org/),
-#' when standard deviation of weight-for-height zscores is problematic,
-#' the acute malnutrition prevalence is re-calculated after normalizing the
-#' zscores to get a standard deviation of 1.0.
-#'
-#' `normalize_zscore()` helps to achieve this end by normalizing the zscores. It
-#' subtracts each element in a vector of zscores with the observed mean of the
-#' same vector and then divides by the observed standard deviation of the same
-#' vector.
-#'
-#' @param x A numeric (double) vector storing zscores (with a least 3 decimal
-#' places)
-#'
-#' @returns A numeric vector of the same length as the input vector
-#'
-#'
-normalize_zscore <- function(x) {
-
-  ## Get mean zscore ----
-  mean_x <- mean(remove_flags(x, "zscore"), na.rm = TRUE)
-  ## Get zscore's standard deviation ----
-  std_x <- sd(remove_flags(x, "zscore"), na.rm = TRUE)
-  ## Empty vector ----
-  norm_x <- numeric(length(x))
-  ## Normalize each element in x ----
-  for (i in seq_along(x)) {
-    norm_x[i] <- (x[i] - mean_x) / std_x
-  }
-  norm_x
-}
-
-
-# Function to identify the type of treatment for prevalence --------------------
-#'
-#' A helper function to tell how to go about MUAC prevalence analysis based on
-#' on the output of age ratio and standard deviation test results
-#'
-#' @param age_ratio_class,sd_class Character vectors storing age ratio's p-values
-#' and standard deviation's classification, respectively.
-#'
-#' @returns A character vector of the same length containing the indication of
-#' what to do for the MUAC prevalence analysis: "weighted", "unweighted" and
-#' "missing". If "weighted", the CDC weighting approach is applied to correct for
-#' age bias. If "unweighted" a normal complex sample analysis is applied, and for
-#' the latter, NA are thrown.
-#'
-#'
-tell_muac_analysis_strategy <- function(age_ratio_class, sd_class) {
-  case_when(
-    age_ratio_class == "Problematic" & sd_class != "Problematic" ~ "weighted",
-    age_ratio_class != "Problematic" & sd_class == "Problematic" ~ "missing",
-    age_ratio_class == "Problematic" & sd_class == "Problematic" ~ "missing",
-    .default = "unweighted"
-  )
-}
-
-
-# Function on acute malnutrition case-definition -------------------------------
-
 #'
 #' Case-Definition: is an observation acutely malnourished?
 #'
@@ -190,7 +124,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #'
 #' @examples
 #' # MUAC-based case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' muac = muac,
 #' edema = edema,
@@ -199,7 +133,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #' head(x)
 #'
 #' # Weight-for-height based case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' zscore = wfhz,
 #' edema = edema,
@@ -208,7 +142,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #' head(x)
 #'
 #' # Combined case-definition ----
-#' x <- prev_data |>
+#' x <- anthro.02 |>
 #' define_wasting(
 #' zscore = wfhz,
 #' muac = muac,
@@ -291,4 +225,37 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
         )
     }
   )
+}
+
+#'
+#' A helper function to classify nutritional status into SAM, MAM or not wasted
+#'
+#' `classify_wasting_for_cdc_approach()` is used a helper inside
+#' [apply_cdc_age_weighting()] to classify nutritional status into "sam", "mam"
+#' or "not wasted" and then the vector returned is used downstream to calculate
+#' the proportions of children with severe and moderate acute malnutrition.
+#'
+#' @param muac An integer vector containing MUAC values. They should be in
+#' millimeters.
+#'
+#' @param .edema Optional. Its a vector containing data on bilateral pitting
+#' edema coded as "y" for yes and "n" for no.
+#'
+#'
+classify_wasting_for_cdc_approach <- function(muac, .edema = NULL) {
+  if (!is.null(.edema)) {
+    #edema <- ifelse(edema == 1, "y", "n")
+    x <- case_when(
+      muac < 115 | {{ .edema }} == "y" ~ "sam",
+      muac >= 115 & muac < 125 & {{ .edema }} == "n" ~ "mam",
+      .default = "not wasted"
+    )
+  } else {
+    x <- case_when(
+      muac < 115 ~ "sam",
+      muac >= 115 & muac < 125 ~ "mam",
+      .default = "not wasted"
+    )
+  }
+  x
 }

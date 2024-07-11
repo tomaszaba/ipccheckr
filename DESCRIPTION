@@ -31,8 +31,8 @@ Imports:
     scales,
     srvyr,
     stats,
-    tidyr,
-    zscorer
+    zscorer,
+    tibble
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

@@ -4,7 +4,7 @@
 
 local(
   {
-    quality <- anthro_data |>
+    quality <- anthro.01 |>
       process_muac_data(
       sex = sex,
       muac = muac,
@@ -13,7 +13,7 @@ local(
       unit = "none"
       ) |>
       check_plausibility_muac(
-        flags = flags,
+        flags = flag_muac,
         sex = sex,
         muac = muac
       )|>
@@ -42,7 +42,7 @@ local(
 ## Test check: generate_pretty_table_mfaz() ----
 local(
   {
-    quality <- anthro_data |>
+    quality <- anthro.01 |>
       process_age(
         svdate = "dos",
         birdate = "dob",
@@ -57,7 +57,7 @@ local(
         unit = "cm"
       ) |>
       check_plausibility_mfaz(
-        flags = flags,
+        flags = flag_mfaz,
         sex = sex,
         muac = muac,
         age = age,
@@ -71,7 +71,7 @@ local(
       {
         testthat::expect_s3_class(quality, "tbl_df")
         testthat::expect_equal(ncol(quality), 18)
-        testthat::expect_equal(nrow(quality), 11)
+        testthat::expect_equal(nrow(quality), 2)
         testthat::expect_true(
           all(c("Area", "Total children", "Flagged data (%)",
                 "Class. of flagged data", "Sex ratio (p)", "Class. of sex ratio",
@@ -92,27 +92,27 @@ local(
 
 local(
   {
-    quality <- anthro_data |>
+    quality <- anthro.01 |>
       process_age(
         svdate = "dos",
         birdate = "dob",
         age = age
       ) |>
-      process_whz_data(
+      process_wfhz_data(
         sex = sex,
         weight = weight,
         height = height,
         .recode_sex = TRUE
       ) |>
-      check_plausibility_whz(
-        flags = flags,
+      check_plausibility_wfhz(
+        flags = flag_wfhz,
         sex = sex,
         age = age,
         weight = weight,
         height = height,
         area = area
       ) |>
-      generate_pretty_table_whz()
+      generate_pretty_table_wfhz()
 
     ### The test ----
     testthat::test_that(
@@ -120,7 +120,7 @@ local(
       {
         testthat::expect_s3_class(quality, "tbl_df")
         testthat::expect_equal(ncol(quality), 20)
-        testthat::expect_equal(nrow(quality), 11)
+        testthat::expect_equal(nrow(quality), 2)
         testthat::expect_true(
           all(c("Area", "Total children", "Flagged data (%)",
                 "Class. of flagged data", "Sex ratio (p)", "Class. of sex ratio",
