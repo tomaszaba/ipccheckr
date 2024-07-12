@@ -96,10 +96,9 @@ process_age <- function(df, svdate = NULL, birdate = NULL, age) {
 }
 
 #'
-#' Age ratio test
+#' Age ratio test on children aged 6:23 over 24:59 months
 #'
 #' @description
-#'
 #' As documented in [nipnTK::ageRatioTest()], age ratio test is an age-related
 #' test of survey data quality. This includes other assessments as screenings,
 #' sentinel sites, etc. Different to [nipnTK::ageRatioTest()], in `age_ratio_test()`

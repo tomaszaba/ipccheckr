@@ -20,6 +20,9 @@ places.}
 moderate acute malnutrition. Set \verb{status = "sam" or status = "mam"} for the
 former or latter, respectively.}
 }
+\value{
+A numeric vector of length and size 1.
+}
 \description{
 As documented in the SMART MUAC tool and in the literature, MUAC shows a known
 bias towards younger children. In a balanced sample, it is expected to have

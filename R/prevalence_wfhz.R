@@ -1,13 +1,13 @@
 #'
-#' Compute a weight-for-height, MUAC-for-age z-score, and MUAC based prevalence estimates
-#' of data collected from a two-stage cluster survey sample design, with the
-#' first stage sampling done with Probability Proportional to the size of population
+#' Compute a weight-for-height based prevalence estimates of data collected from a two-stage
+#' cluster survey sample design, with the first stage sampling done with Probability
+#' Proportional to the size of population
 #'
 #' @description
 #' Create a survey design object using the [srvyr::as_survey_design()] and then calculate
 #'  the survey means as well the sum of positive cases.
 #'
-#' @param df A data frame object returned by [process_wfhz_data()] or [process_muac_data()].
+#' @param df A data frame object returned by [process_wfhz_data()].
 #'  this will contain the wrangled vectors that are read inside the function.
 #' @param .wt A numeric vector containing survey weights. If set to NULL (default) and
 #'  the function will assume self weighted, like in ENA for SMART, otherwise if given, the
@@ -18,6 +18,10 @@
 #' @param .summary_by A character vector containing data on the geographical areas where
 #'  the data was collected. This is to group the survey design object into different
 #'  geographical areas in the data and allow for summaries to be computed for each of them.
+#'
+#'  @returns A tibble of size depending on the number of groups of the vector given to
+#'  `.summary_by` or if set to NULL, and of length 17.
+#'
 #'
 compute_pps_based_wfhz_prevalence <- function(df,
                                               .wt = NULL,
@@ -231,19 +235,21 @@ compute_wfhz_prevalence <- function(df,
                                     .edema = NULL,
                                     .summary_by = NULL) {
 
+  ## Difuse argument .summary_by ----
   .summary_by <- rlang::enquo(.summary_by)
 
   ## An empty vector type list ----
   results <- list()
 
-  ## Get summary of standard deviation classification ----
   if (!rlang::quo_is_null(.summary_by)) {
+    ## Grouped summary of standard deviation classification ----
     x <- summarise(
       df,
       std = classify_sd(sd(remove_flags(.data$wfhz, "zscore"), na.rm = TRUE)),
       .by = !!.summary_by
     )
   } else {
+    ## Non-grouped summary ----
     x <- summarise(
       df,
       std = classify_sd(sd(remove_flags(.data$wfhz, "zscore"), na.rm = TRUE))
@@ -264,10 +270,11 @@ compute_wfhz_prevalence <- function(df,
       ### Compute standard complex sample based prevalence analysis ----
       result <- compute_pps_based_wfhz_prevalence(data, {{ .wt }}, {{ .edema }}, !!.summary_by)
     } else {
+      ### Compute grouped PROBIT based prevalence ----
       if (!rlang::quo_is_null(.summary_by)) {
-        ### Compute PROBIT based prevalence ----
         result <- compute_probit_prevalence(data, !!.summary_by)
       } else {
+        ### Compute non-grouped PROBIT based prevalence ----
         result <- compute_probit_prevalence(data)
       }
     }

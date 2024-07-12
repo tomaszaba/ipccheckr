@@ -97,6 +97,10 @@
 #' | *edema* | Edema, "n" = no, "y" = yes |
 #' | *muac* | Mid-upper arm circumference (mm) |
 #'
+#' @examples
+#' anthro.03
+#'
+#'
 "anthro.03"
 
 
@@ -127,6 +131,9 @@
 #' | *mfaz* | MUAC-for-age z-scores with 3 decimal places |
 #' | *flag_mfaz* | Flagged observations. 1=flagged, 0=not flagged |
 #'
+#' @examples
+#' anthro.04
+#'
 "anthro.04"
 
 
@@ -153,8 +160,6 @@
 #' @examples
 #' wfhz.01
 #'
-#'
-#' @rdname data
 #'
 "wfhz.01"
 

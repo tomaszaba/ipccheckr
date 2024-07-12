@@ -29,4 +29,9 @@ prevalence when used on a data set with multiple survey areas that may or not ha
 different classification for standard deviation that may warrant different analysis
 approach, as the function is designed for.
 }
+\examples{
+anthro.03
+
+
+}
 \keyword{datasets}

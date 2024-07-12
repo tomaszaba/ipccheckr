@@ -31,4 +31,8 @@ performance of \verb{[compute_muac_prevalence()]} based when used on a multiple 
 data that may or not have on the aforementioned test that may then warrant a different
 analysis approach, as the function is designed for.
 }
+\examples{
+anthro.04
+
+}
 \keyword{datasets}

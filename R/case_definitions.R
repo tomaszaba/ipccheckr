@@ -15,10 +15,8 @@
 #' acute malnutrition with [define_wasting_cases_combined()] cases options are:
 #' c("cgam", "csam", "cmam").
 #'
-#' @returns A dichotomous vector of 1=Yes and 0=No.
-#'
-#' @examples
-#' # example code
+#' @returns A numeric vector of the same size as the input vector, with values ranging
+#' between 1=Yes and 0=No.
 #'
 #' @rdname case_definitions
 #'
@@ -27,9 +25,9 @@ define_wasting_cases_muac <- function(muac, edema = NULL,
   ## Match argument ----
   cases <- match.arg(cases)
 
-  ## Define cases based on MUAC ----
   if (!is.null(edema)) {
     switch(
+      ### Define cases based on MUAC including edema ----
       cases,
       "gam" = {gam <- ifelse(muac < 125 | edema == "y", 1, 0)},
       "sam" = {sam <- ifelse(muac < 115 | edema == "y", 1, 0)},
@@ -37,6 +35,7 @@ define_wasting_cases_muac <- function(muac, edema = NULL,
     )
   } else {
     switch(
+      ### Define cases based on MUAC ----
       cases,
       "gam" = {gam <- ifelse(muac < 125, 1, 0)},
       "sam" = {sam <- ifelse(muac < 115, 1, 0)},
@@ -55,9 +54,9 @@ define_wasting_cases_whz <- function(zscore, edema = NULL,
   ## Match argument ----
   cases <- match.arg(cases)
 
-  ## Define cases based on wfhz ----
   if (!is.null(edema)) {
     switch(
+      ### Define cases based on WFHZ including edema ----
       cases,
       "gam" = {gam <- ifelse(zscore < -2 | edema == "y", 1, 0)},
       "sam" = {sam <- ifelse(zscore < - 3 | edema == "y", 1, 0)},
@@ -65,6 +64,7 @@ define_wasting_cases_whz <- function(zscore, edema = NULL,
     )
   } else {
     switch(
+      ### Define cases based on WFHZ ----
       cases,
       "gam" = {gam <- ifelse(zscore < -2, 1, 0)},
       "sam" = {sam <- ifelse(zscore < - 3, 1, 0)},
@@ -84,9 +84,9 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
   ## Match argument ----
   cases <- match.arg(cases)
 
-  ## Define cases based on combined methods ----
   if (!is.null(edema)) {
     switch(
+      ### Define cases based on WFHZ or MUAC or edema ----
       cases,
       "cgam" = {cgam <- ifelse(zscore < -2 | muac < 125 | edema == "y", 1, 0)},
       "csam" = {csam <- ifelse(zscore < -3 | muac < 115 | edema == "y", 1, 0)},
@@ -94,6 +94,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
     )
   } else {
     switch(
+      ### Define cases based on WFHZ or MUAC ----
       cases,
       "cgam" = {cgam <- ifelse(zscore < -2 | muac < 125, 1, 0)},
       "csam" = {csam <- ifelse(zscore < -3 | muac < 115, 1, 0)},
@@ -159,8 +160,8 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
   ## Match argument ----
   base <- match.arg(base)
 
-  ## Create logical vectors of gam, sam and mam ----
   switch(
+    ### Add WFHZ based case definitions to data frame ----
     base,
     "wfhz" = {
       df |>
@@ -181,6 +182,7 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
             cases = "mam")
         )
     },
+    ### Add MUAC based case definitions to data frame ----
     "muac" = {
       df |>
         mutate(
@@ -201,6 +203,7 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
             )
         )
     },
+    ### Add combined (WFHZ or MUAC or edema) based case definitions to data frame ----
     "combined" = {
       df |>
         mutate(
@@ -230,6 +233,7 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
 #'
 #' A helper function to classify nutritional status into SAM, MAM or not wasted
 #'
+#' @description
 #' `classify_wasting_for_cdc_approach()` is used a helper inside
 #' [apply_cdc_age_weighting()] to classify nutritional status into "sam", "mam"
 #' or "not wasted" and then the vector returned is used downstream to calculate
@@ -241,16 +245,21 @@ define_wasting <- function(df, zscore = NULL, muac = NULL, edema = NULL,
 #' @param .edema Optional. Its a vector containing data on bilateral pitting
 #' edema coded as "y" for yes and "n" for no.
 #'
+#' @returns A numeric vector of the same size as the input vector with values ranging
+#' between "sam", "mam" and "not wasted" for severe, moderate acute malnutrition and not
+#' acutely malnourished, respectively.
+#'
 #'
 classify_wasting_for_cdc_approach <- function(muac, .edema = NULL) {
   if (!is.null(.edema)) {
-    #edema <- ifelse(edema == 1, "y", "n")
+    ## Define cases including edema ----
     x <- case_when(
       muac < 115 | {{ .edema }} == "y" ~ "sam",
       muac >= 115 & muac < 125 & {{ .edema }} == "n" ~ "mam",
       .default = "not wasted"
     )
   } else {
+    ## Define cases excluding edema ----
     x <- case_when(
       muac < 115 ~ "sam",
       muac >= 115 & muac < 125 ~ "mam",
