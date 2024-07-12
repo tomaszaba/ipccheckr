@@ -2,7 +2,7 @@
 % Please edit documentation in R/age.R
 \name{age_ratio_test}
 \alias{age_ratio_test}
-\title{Age ratio test}
+\title{Age ratio test on children aged 6:23 over 24:59 months}
 \usage{
 age_ratio_test(age, .expectedP = 0.66)
 }

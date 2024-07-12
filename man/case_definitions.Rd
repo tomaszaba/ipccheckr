@@ -31,15 +31,12 @@ c("cgam", "csam", "cmam").}
 decimal places.}
 }
 \value{
-A dichotomous vector of 1=Yes and 0=No.
+A numeric vector of the same size as the input vector, with values ranging
+between 1=Yes and 0=No.
 }
 \description{
 \code{\link[=define_wasting_cases_muac]{define_wasting_cases_muac()}}, \code{\link[=define_wasting_cases_whz]{define_wasting_cases_whz()}} and
 \code{\link[=define_wasting_cases_combined]{define_wasting_cases_combined()}} help you get through with your wasting
 case-definition for each observation. It should be used inside dplyr::mutate()
 or base::transform(). It was designed to be used inside \code{\link[=define_wasting]{define_wasting()}}.
-}
-\examples{
-# example code
-
 }

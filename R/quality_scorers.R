@@ -1,6 +1,7 @@
 #'
 #' Assign a penalty point for the amount of proportion flagged data and standard deviation
 #'
+#' @description
 #' The function assigns a penalty score for a given category of test classification.
 #' The score range varies between 0 (when "Excellent") to 20 (when "Problematic") for
 #' both flagged data and standard deviation. This was borrowed from the
@@ -35,6 +36,7 @@ assign_penalty_points_flags_and_sd <- function(x) {
 #'
 #' Assign a penalty point for the amount of selection biases in age and sex ratios
 #'
+#' @description
 #' The function assigns a penalty score for a age and sex ratio's test classification.
 #' The score range varies between 0 (when "Excellent") to 10 (when "Problematic") for
 #' both, according to the [ENA for SMART software](https://smartmethodology.org/).
@@ -65,8 +67,10 @@ assign_penalty_points_age_sex_ratio <- function(x) {
 }
 
 #'
+#'
 #' Assign a penalty point for the amount of issues in Skweness and Kurtosis
 #'
+#' @description
 #' The function assigns a penalty score for a Skewness and Kurtosis test classification.
 #' The score range varies between 0 (when "Excellent") to 5 (when "Problematic") for
 #' both, according to the [ENA for SMART software](https://smartmethodology.org/).
@@ -99,6 +103,8 @@ assign_penalty_points_skew_kurt <- function(x) {
 #'
 #' Get the overall WHZ or MFAZ's quality score
 #'
+#'
+#' @description
 #' `compute_quality_score()` provides the overall quality score of either WHZ or MFAZ,
 #' by adding up the scores across each test criteria. This is an input to
 #' [classify_overall_quality()].

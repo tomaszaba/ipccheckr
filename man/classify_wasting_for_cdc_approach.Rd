@@ -13,6 +13,11 @@ millimeters.}
 \item{.edema}{Optional. Its a vector containing data on bilateral pitting
 edema coded as "y" for yes and "n" for no.}
 }
+\value{
+A numeric vector of the same size as the input vector with values ranging
+between "sam", "mam" and "not wasted" for severe, moderate acute malnutrition and not
+acutely malnourished, respectively.
+}
 \description{
 \code{classify_wasting_for_cdc_approach()} is used a helper inside
 \code{\link[=apply_cdc_age_weighting]{apply_cdc_age_weighting()}} to classify nutritional status into "sam", "mam"

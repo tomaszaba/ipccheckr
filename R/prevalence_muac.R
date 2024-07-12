@@ -21,8 +21,8 @@ tell_muac_analysis_strategy <- function(age_ratio_class, sd_class) {
   )
 }
 
-# The CDC approach to correct for age bias in MUAC -----------------------------
 
+#'
 #'
 #' Correct the observed MUAC prevalence when there is an unbalanced sample
 #' between children under 2 and over two years old
@@ -40,14 +40,18 @@ tell_muac_analysis_strategy <- function(age_ratio_class, sd_class) {
 #' SMART plausibility check. Consider reading the documentation before use.
 #'
 #' @param muac An integer vector containing MUAC measurements in mm.
+#'
 #' @param age A double vector containing age in months with at least 2 decimal
 #' places.
+#'
 #' @param .edema Optional. If given, it should be a character vector of "y" = Yes,
 #' "n" = No bilateral edema.
+#'
 #' @param status If you wish to get the prevalence/proportions of severe or
 #' moderate acute malnutrition. Set `status = "sam" or status = "mam"` for the
 #' former or latter, respectively.
 #'
+#' @returns A numeric vector of length and size 1.
 #'
 apply_cdc_age_weighting <- function(muac, age,
                                     .edema = NULL, status = c("sam", "mam")) {
@@ -78,7 +82,35 @@ apply_cdc_age_weighting <- function(muac, age,
   p
 }
 
+
+
 #'
+#'
+#' A wrapper function to compute of `apply_cdc_age_weighting()` that allows to work on
+#' a data frame
+#'
+#' @description
+#' `compute_weighted_prevalence()` is the main function use to compute age adjusted MUAC
+#' prevalence where there are excess of children 6:23 over 24:59 months. It allows the
+#' computations to be done on a data frame. The function is used inside the main and
+#' exported function to compute MUAC based prevalence. Before computing the prevalence,
+#' the function first removed the flagged data so the computations are performed on non-fl
+#' agged observations.
+#'
+#' @param df A data frame object returned by [process_muac_data()] this will contain the
+#' wrangled vectors that are read inside the function.
+#'
+#' @param .edema A character vector containing child's status on edema with "n" for no
+#'  edema, "y" = yes edema. Should you data be coded differently, re-code it to aforementioned
+#'  codes.
+#' @param .summary_by A character vector containing data on the geographical areas where
+#'  the data was collected. This is to group the survey design object into different
+#'  geographical areas in the data and allow for summaries to be computed for each of them.
+#'
+#' @returns A tibble with length and size varying according to use of `.summary_by`.
+#' If set to NULL, a tibble of 1 x 3 is returned, otherwise the size of the tibble with be
+#' corresponding to the number of groups/areas in the vector given to `.summary_by`, but
+#' with the same length.
 #'
 #'
 compute_weighted_prevalence <- function(df, .edema=NULL, .summary_by = NULL) {
@@ -113,13 +145,41 @@ compute_weighted_prevalence <- function(df, .edema=NULL, .summary_by = NULL) {
   df
 }
 
+
+
+#'
+#'
+#' Compute MUAC based prevalence estimates of data collected from a two-stage cluster
+#' survey sample design, with the first stage sampling done with Probability Proportional
+#' to the size of population
+#'
+#' @description
+#' Create a survey design object using the [srvyr::as_survey_design()] and then calculate
+#'  the survey means as well the sum of positive cases.
+#'
+#' @param df A data frame object returned by [process_muac_data()].
+#'  this will contain the wrangled vectors that are read inside the function.
+#'
+#' @param .wt A numeric vector containing survey weights. If set to NULL (default) and
+#'  the function will assume self weighted, like in ENA for SMART, otherwise if given, the
+#'  weighted analysis will be computed with weighted population returned.
+#'
+#' @param .edema A character vector containing child's status on edema with "n" for no
+#'  edema, "y" = yes edema. Should you data be coded differently, re-code it to aforementioned
+#'  codes.
+#' @param .summary_by A character vector containing data on the geographical areas where
+#'  the data was collected. This is to group the survey design object into different
+#'  geographical areas in the data and allow for summaries to be computed for each of them.
+#'
+#'  @returns A tibble of size depending on the number of groups of the vector given to
+#'  `.summary_by` or if set to NULL, and of length 17.
 #'
 #'
 #'
 compute_pps_based_muac_prevalence <- function(df,
-                                          .wt=NULL,
-                                          .edema=NULL,
-                                          .summary_by = NULL) {
+                                              .wt = NULL,
+                                              .edema = NULL,
+                                              .summary_by = NULL) {
   df <- df |>
     define_wasting(muac = .data$muac, edema = {{ .edema }}, base = "muac")
 
@@ -165,15 +225,82 @@ compute_pps_based_muac_prevalence <- function(df,
 
 
 #'
+#'
+#'
+#' Compute acute malnutrition prevalence based on MUAC (the absolute values)
+#'
+#' @description
+#' `compute_muac_prevalence()` is a handy function designed to dynamically compute acute
+#' malnutrition's prevalence using the absolute values of MUAC, but with use of MFAZ for
+#' quality checks before advancing to prevalence computations. Under the hood, the function
+#' first checks the status of MFAZ's standard deviation (SD) after removing flags, and
+#' the status of age ratio among children aged 6:23 vs 24:59 months. Then it decides on the
+#' appropriate prevalence analysis approach to follow: (i) if SD & age ratio are both not
+#' problematic, a complex sample-based prevalence analysis (for a two-stage  PPS
+#' cluster sampling) is computed; (ii) if MFAZ's SD is not problematic, but age ratio test
+#' is, the CDC/SMART MUAC tool weighting approach is use to compute the prevalence; (iii)
+#' lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalenec
+#' analysis is computed and NA's (of Not Applicable) are thrown.
+#' The function also super handy to work on large data sets with multiple survey areas. For
+#' this, the aforementioned conditionals are checked for each survey areas in a summarised
+#' data frame and prevalence analysis computed according to each row's scenario.
+#'
+#' @param df A data frame object returned by [process_muac_data()].
+#'
+#' @param .wt A numeric vector containing survey weights. If set to NULL (default) and
+#' the function will assume self weighted, like in ENA for SMART, otherwise if given, the
+#' weighted analysis will be computed with weighted population returned.
+#'
+#' @param .edema A character vector containing child's status on edema with "n" for no
+#' edema, "y" = yes edema. Should you data be coded differently, re-code it to aforementioned
+#' codes.
+#' @param .summary_by A character vector containing data on the geographical areas where
+#' the data was collected. If you are working on a single survey data, set
+#' .summary_by = NULL (default). If this argument is not used, the function will error.
+#'
+#' @returns A tibble. The length vary depending on .summary_by. If set to NULL, a tibble of
+#' 1 x 16 is returned, otherwise, a tibble of n rows (depending on the number of geographical
+#' areas in the data set) x 17.
+#'
+#' @examples
+#' ## When .summary.by = NULL ----
+#'
+#' x <- compute_muac_prevalence(
+#' df = anthro.04,
+#' .wt = NULL,
+#' .edema = edema,
+#' .summary_by = NULL
+#' )
+#'
+#' print(x)
+#'
+#' ## When .summary_by is not set to NULL ----
+#'
+#' p <- compute_muac_prevalence(
+#' df = anthro.04,
+#' .wt = NULL,
+#' .edema = edema,
+#' .summary_by = province
+#' )
+#'
+#' print(x)
+#'
+#'
+#' @export
+#'
 compute_muac_prevalence <- function(df,
                                     .wt = NULL,
                                     .edema = NULL,
                                     .summary_by = NULL) {
+
+  ## Difuse argument .summary_by ----
   .summary_by <- rlang::enquo(.summary_by)
+
+  ## An empty vector type list ----
   results <- list()
 
-  ## Get and classify age ratio and standard deviation ----
   if (!rlang::quo_is_null(.summary_by)) {
+    ## Grouped summary of analysis approach ----
     x <- df |>
       group_by(!!.summary_by) |>
       summarise(
@@ -183,6 +310,7 @@ compute_muac_prevalence <- function(df,
         .groups = "drop"
       )
   } else {
+    ## Non-grouped summary of analysis approach ----
     x <- df |>
       summarise(
         age_ratio = classify_age_sex_ratio(age_ratio_test(.data$age, .expectedP = 0.66)$p),
@@ -206,16 +334,16 @@ compute_muac_prevalence <- function(df,
       ### Compute standard complex sample based prevalence analysis ----
       output <- compute_pps_based_muac_prevalence(data, {{ .wt }}, {{ .edema }}, !!.summary_by)
     } else if (analysis_approach == "weighted") {
+      ### Compute grouped weighted prevalence ----
       if (!rlang::quo_is_null(.summary_by)) {
-        ### Compute weighted prevalence summarized at .summary_by ----
         output <- compute_weighted_prevalence(data, .edema = {{ .edema }}, !!.summary_by)
       } else {
-        ### Compute non-summarized weighted prevalence ----
+        ### Compute grouped weighted prevalence ----
         output <- compute_weighted_prevalence(data, .edema = {{ .edema }})
       }
     } else {
+      ## Add grouped NA's ----
       if (!rlang::quo_is_null(.summary_by)) {
-        ### Add NA's to the summarized tibble accordingly ----
         output <- summarise(
           data,
           gam_p = NA_real_,
@@ -224,7 +352,7 @@ compute_muac_prevalence <- function(df,
           .by = !!.summary_by
         )
       } else {
-        ### Return a non-summarised tibble ----
+        ## Add non-grouped NA's ----
         output <- tibble::tibble(
           gam_p = NA_real_,
           sam_p = NA_real_,
@@ -234,13 +362,14 @@ compute_muac_prevalence <- function(df,
     }
     results[[i]] <- output
   }
-  ### Ensure that all geographical aras are added to the tibble ----
+  ### Ensure that all geographical areas are added to the tibble ----
   if (!rlang::quo_is_null(.summary_by)) {
     results <- dplyr::bind_rows(results) |>
       dplyr::relocate(.data$gam_p, .after = .data$gam_n) |>
       dplyr::relocate(.data$sam_p, .after = .data$sam_n) |>
       dplyr::relocate(.data$mam_p, .after = .data$mam_n)
   } else {
+    ## Non-grouped results
     results <- dplyr::bind_rows(results)
   }
   results

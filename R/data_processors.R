@@ -1,5 +1,4 @@
-# Function to detect outliers --------------------------------------------------
-
+#'
 #'
 #' Identify and flag outliers in WHZ, MFAZ, and crude MUAC datasets
 #'
@@ -56,11 +55,12 @@ flag_outliers <- function(x, type = c("zscore", "crude")) {
   }
 }
 
-# Function to remove detected outliers -----------------------------------------
 
+#'
 #'
 #' Remove detected outliers
 #'
+#' @description
 #' `remove_flags()` removes flags detected by [flag_outliers()]. It helps you
 #' compute your statistics when flags needs to be removed, such as in standard
 #' deviation.
@@ -92,11 +92,12 @@ remove_flags <- function(x, unit = c("zscore", "crude")) {
 }
 
 
-# Function to recode MUAC variables into desired units -------------------------
-
+#'
+#'
 #'
 #' Recode crude MUAC variable into either centimeters or millimeters
 #'
+#' @description
 #' Sometimes, a vector containing MUAC values may be in centimeters or in
 #' millimeters. You may want to get in the right format to use with
 #' [zscorer::addWGSR] or [nipnTK::digitPreference()]. `recode_muac()` helps you
@@ -143,11 +144,12 @@ recode_muac <- function(muac, unit = c("cm", "mm")) {
 }
 
 
-# Function to process MUAC data ------------------------------------------------
-
+#'
+#'
 #'
 #' Process MUAC data a get it ready for analyses
 #'
+#' @description
 #' `process_muac_data()` gets your input data ready for downstream MUAC related
 #' analysis.
 #'
