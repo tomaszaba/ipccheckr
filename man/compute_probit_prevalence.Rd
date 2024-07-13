@@ -4,7 +4,7 @@
 \alias{compute_probit_prevalence}
 \title{Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach.}
 \usage{
-compute_probit_prevalence(df, .summary_by = NULL)
+compute_probit_prevalence(df, .summary_by = NULL, .for = c("wfhz", "mfaz"))
 }
 \arguments{
 \item{df}{A data frame object returned by \code{\link[=process_wfhz_data]{process_wfhz_data()}}. this will contain the
@@ -14,6 +14,9 @@ wrangled vectors that are read inside the function.}
 the data was collected. This is to group the survey design object into different
 geographical areas in the data and allow for summaries to be computed for each of them.
 Default is NULL.}
+
+\item{.for}{A choice between "wfhz" and "mfaz" for the anthropometric index you wish
+to compute PROBIT prevalence on.}
 }
 \value{
 A tibble with the PROBIT based point prevalence for global, severe and moderate

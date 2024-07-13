@@ -242,8 +242,8 @@ compute_pps_based_muac_prevalence <- function(df,
 #' lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalenec
 #' analysis is computed and NA's (of Not Applicable) are thrown.
 #' The function also super handy to work on large data sets with multiple survey areas. For
-#' this, the aforementioned conditionals are checked for each survey areas in a summarised
-#' data frame and prevalence analysis computed according to each row's scenario.
+#' this, the aforementioned conditionals are checked for each survey areas in a summarized
+#' data frame and prevalence get computed according to each row's scenario.
 #'
 #' @param df A data frame object returned by [process_muac_data()].
 #'

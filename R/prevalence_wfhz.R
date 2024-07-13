@@ -9,12 +9,15 @@
 #'
 #' @param df A data frame object returned by [process_wfhz_data()].
 #'  this will contain the wrangled vectors that are read inside the function.
+#'
 #' @param .wt A numeric vector containing survey weights. If set to NULL (default) and
 #'  the function will assume self weighted, like in ENA for SMART, otherwise if given, the
 #'  weighted analysis will be computed with weighted population returned.
+#'
 #' @param .edema A character vector containing child's status on edema with "n" for no
 #'  edema, "y" = yes edema. Should you data be coded differently, re-code it to aforementioned
 #'  codes.
+#'
 #' @param .summary_by A character vector containing data on the geographical areas where
 #'  the data was collected. This is to group the survey design object into different
 #'  geographical areas in the data and allow for summaries to be computed for each of them.
@@ -124,39 +127,82 @@ apply_probit_approach <- function(x, .status = c("gam", "sam")) {
 #'  geographical areas in the data and allow for summaries to be computed for each of them.
 #'  Default is NULL.
 #'
+#' @param .for A choice between "wfhz" and "mfaz" for the anthropometric index you wish
+#'  to compute PROBIT prevalence on.
+#'
 #' @returns A tibble with the PROBIT based point prevalence for global, severe and moderate
 #'  acute malnutrition.
 #'
 #'
-compute_probit_prevalence <- function(df, .summary_by = NULL) {
+compute_probit_prevalence <- function(df,
+                                      .summary_by = NULL,
+                                      .for = c("wfhz", "mfaz")) {
+  ## Difuse argument ----
   .summary_by <- rlang::enquo(.summary_by)
-  if(!is.null(.summary_by)) {
-    df <- summarise(
-      df,
-      gam = apply_probit_approach(.data$wfhz, .status = "gam"),
-      sam = apply_probit_approach(.data$wfhz, .status = "sam"),
-      mam = .data$gam - .data$sam,
-      .by = !!.summary_by
-      ) |>
-      mutate(
-        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
-        gam = NA, sam = NA, mam = NA
-      ) |>
-      dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
-  } else {
-    df <- summarise(
-      df,
-      gam = apply_probit_approach(.data$wfhz, .status = "gam"),
-      sam = apply_probit_approach(.data$wfhz, .status = "sam"),
-      mam = .data$gam - .data$sam
-      ) |>
-      mutate(
-        gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
-        gam = NA, sam = NA, mam = NA
-      ) |>
-      dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
-  }
-  df
+  ## Match argument ----
+  .for <- match.arg(.for)
+
+  switch(
+    .for,
+    "wfhz" = {
+      if(!is.null(.summary_by)) {
+        df <- summarise(
+          df,
+          gam = apply_probit_approach(.data$wfhz, .status = "gam"),
+          sam = apply_probit_approach(.data$wfhz, .status = "sam"),
+          mam = .data$gam - .data$sam,
+          .by = !!.summary_by
+        ) |>
+          mutate(
+            gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
+            gam = NA, sam = NA, mam = NA
+          ) |>
+          dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
+      } else {
+        df <- summarise(
+          df,
+          gam = apply_probit_approach(.data$wfhz, .status = "gam"),
+          sam = apply_probit_approach(.data$wfhz, .status = "sam"),
+          mam = .data$gam - .data$sam
+        ) |>
+          mutate(
+            gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
+            gam = NA, sam = NA, mam = NA
+          ) |>
+          dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
+      }
+      df
+    },
+    "mfaz" = {
+      if(!is.null(.summary_by)) {
+        df <- summarise(
+          df,
+          gam = apply_probit_approach(.data$mfaz, .status = "gam"),
+          sam = apply_probit_approach(.data$mfaz, .status = "sam"),
+          mam = .data$gam - .data$sam,
+          .by = !!.summary_by
+        ) |>
+          mutate(
+            gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
+            gam = NA, sam = NA, mam = NA
+          ) |>
+          dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
+      } else {
+        df <- summarise(
+          df,
+          gam = apply_probit_approach(.data$mfaz, .status = "gam"),
+          sam = apply_probit_approach(.data$mfaz, .status = "sam"),
+          mam = .data$gam - .data$sam
+        ) |>
+          mutate(
+            gam_p = .data$gam, sam_p = .data$sam, mam_p = .data$mam,
+            gam = NA, sam = NA, mam = NA
+          ) |>
+          dplyr::select(!2:4) ## To make it fit in the tibble structure from the main function
+      }
+      df
+    }
+  )
 }
 
 #'
@@ -170,15 +216,17 @@ compute_probit_prevalence <- function(df, .summary_by = NULL) {
 #' and acceptable, a complex sample-based prevalence analysis (for a two-stage  PPS
 #' cluster sampling) is computed, otherwise, a re-calculated prevalence using PROBIT method
 #' with a sample mean and a SD = 1 is computed. On the former analysis approach, the function
-#' was also designed to work around survey weights. Furthermore, `compute_wfhz_prevalence()`
-#' is quite handy for using on a large data sets with multiple survey areas. For this,
-#' the function checks the WFHZ's SD for each survey area and then computes each survey
-#' area's prevalence according to the status of SD.
+#' was also designed to work around survey weights.
+#' The function also super handy to work on large data sets with multiple survey areas. For
+#' this, the aforementioned conditionals are checked for each survey areas in a summarized
+#' data frame and prevalence get computed according to each row's scenario.
 #'
 #' @param df A data frame object returned by [process_wfhz_data()].
+#'
 #' @param .wt A numeric vector containing survey weights. If set to NULL (default) and
 #' the function will assume self weighted, like in ENA for SMART, otherwise if given, the
 #' weighted analysis will be computed with weighted population returned.
+#'
 #' @param .edema A character vector containing child's status on edema with "n" for no
 #' edema, "y" = yes edema. Should you data be coded differently, re-code it to aforementioned
 #' codes.
@@ -272,10 +320,10 @@ compute_wfhz_prevalence <- function(df,
     } else {
       ### Compute grouped PROBIT based prevalence ----
       if (!rlang::quo_is_null(.summary_by)) {
-        result <- compute_probit_prevalence(data, !!.summary_by)
+        result <- compute_probit_prevalence(data, !!.summary_by, .for = "wfhz")
       } else {
         ### Compute non-grouped PROBIT based prevalence ----
-        result <- compute_probit_prevalence(data)
+        result <- compute_probit_prevalence(data, .for = "wfhz")
       }
     }
     results[[i]] <- result
