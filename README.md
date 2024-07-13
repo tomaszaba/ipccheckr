@@ -50,10 +50,9 @@ and reproducible thanks to its array of handy functions.
 In a nutshell, the array of exported functions span from sample size
 checkers, data processors, quality checkers, prevalence calculators as
 well as some handy functions to render formatted and presentable output
-tables on the two latter groups of functions. Two useful workflows are
-shown below on how to use `ipcchecker`:
+tables on the two latter groups of functions.
 
-### Useful worklow with `ipccheckr` for data quality checks
+### Useful workflow with `ipccheckr` for data quality checks
 
 <img src="man/figures/README-mermaid-diagram-1.png" style="display: block; margin: auto;" />
 

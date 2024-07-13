@@ -32,9 +32,9 @@ The typical analysis workflow is overly complex, tiring and tedious, time-consum
 
 ## What does `ipccheckr` do?
 
-In a nutshell, the array of exported functions span from sample size checkers, data processors, quality checkers, prevalence calculators as well as some handy functions to render formatted and presentable output tables on the two latter groups of functions. Two useful workflows are shown below on how to use `ipcchecker`: 
+In a nutshell, the array of exported functions span from sample size checkers, data processors, quality checkers, prevalence calculators as well as some handy functions to render formatted and presentable output tables on the two latter groups of functions.
 
-### Useful worklow with `ipccheckr` for data quality checks
+### Useful workflow with `ipccheckr` for data quality checks
 ```{r mermaid-diagram, echo=FALSE, fig.align='center'}
 library(DiagrammeR)
 
@@ -44,22 +44,22 @@ graph TB;
   A[Start] --> B[Get acquainted with the data at your disposal];
   B --> C[Check if the sample size requirements were met];
   C --> D{Met?}
-  D --> |No| E[End];
+  D --> |NO| E(End);
   D --> |YES| F{Indicator?}
   F --> G{WFHZ};
   G --> H[Process age];
   H --> I[Process WFHZ data];
-  I --> J[Check plausibility];
-  J --> K(End of workflow);
+  I --> J[Check Plausibility];
+  J --> K(End);
   F --> L{MFAZ};
   L --> M[Process age];
   M --> N[Process MUAC data];
-  N --> O[Check plausibility]
-  O --> P(End of workflow);
+  N --> O[Check Plausibility]
+  O --> P(End);
   F --> Q{MUAC};
   Q --> R[Process MUAC data];
   R --> S[Check Plausibility];
-  S --> T(End of workflow);
+  S --> T(End);
   
   style A fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
   style B fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
@@ -83,7 +83,7 @@ graph TB;
   style T fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px
   
   
-", width = 800, height = 600 )
+", width = 800, height = 1000 )
 ```
 
 ### On the prevalence analysis
