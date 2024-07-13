@@ -2,7 +2,8 @@
 % Please edit documentation in R/prevalence_wfhz.R
 \name{compute_wfhz_prevalence}
 \alias{compute_wfhz_prevalence}
-\title{Compute acute malnutrition prevalence based on weight-for-height z-scores (WFHZ)}
+\title{Compute acute malnutrition prevalence based on weight-for-height z-scores (WFHZ),
+MUAC-for-age z-scores (MFAZ), MUAC and combined}
 \usage{
 compute_wfhz_prevalence(df, .wt = NULL, .edema = NULL, .summary_by = NULL)
 }

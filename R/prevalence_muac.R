@@ -94,8 +94,8 @@ apply_cdc_age_weighting <- function(muac, age,
 #' prevalence where there are excess of children 6:23 over 24:59 months. It allows the
 #' computations to be done on a data frame. The function is used inside the main and
 #' exported function to compute MUAC based prevalence. Before computing the prevalence,
-#' the function first removed the flagged data so the computations are performed on non-fl
-#' agged observations.
+#' the function first removed the flagged data so the computations are performed on
+#' non-flagged observations.
 #'
 #' @param df A data frame object returned by [process_muac_data()] this will contain the
 #' wrangled vectors that are read inside the function.
@@ -231,16 +231,16 @@ compute_pps_based_muac_prevalence <- function(df,
 #'
 #' @description
 #' `compute_muac_prevalence()` is a handy function designed to dynamically compute acute
-#' malnutrition's prevalence using the absolute values of MUAC, but with use of MFAZ for
+#' malnutrition's prevalence using the absolute values of MUAC, however using the MFAZ for
 #' quality checks before advancing to prevalence computations. Under the hood, the function
 #' first checks the status of MFAZ's standard deviation (SD) after removing flags, and
 #' the status of age ratio among children aged 6:23 vs 24:59 months. Then it decides on the
 #' appropriate prevalence analysis approach to follow: (i) if SD & age ratio are both not
 #' problematic, a complex sample-based prevalence analysis (for a two-stage  PPS
 #' cluster sampling) is computed; (ii) if MFAZ's SD is not problematic, but age ratio test
-#' is, the CDC/SMART MUAC tool weighting approach is use to compute the prevalence; (iii)
-#' lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalenec
-#' analysis is computed and NA's (of Not Applicable) are thrown.
+#' is, the CDC/SMART MUAC tool weighting approach is used to compute the prevalence; (iii)
+#' lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalence
+#' analysis is computed and NA (of Not Applicable) are thrown.
 #' The function also super handy to work on large data sets with multiple survey areas. For
 #' this, the aforementioned conditionals are checked for each survey areas in a summarized
 #' data frame and prevalence get computed according to each row's scenario.
@@ -283,7 +283,7 @@ compute_pps_based_muac_prevalence <- function(df,
 #' .summary_by = province
 #' )
 #'
-#' print(x)
+#' print(p)
 #'
 #'
 #' @export
