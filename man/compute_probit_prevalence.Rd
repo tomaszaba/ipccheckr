@@ -2,13 +2,13 @@
 % Please edit documentation in R/prevalence_wfhz.R
 \name{compute_probit_prevalence}
 \alias{compute_probit_prevalence}
-\title{Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach.}
+\title{Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach}
 \usage{
 compute_probit_prevalence(df, .summary_by = NULL, .for = c("wfhz", "mfaz"))
 }
 \arguments{
-\item{df}{A data frame object returned by \code{\link[=process_wfhz_data]{process_wfhz_data()}}. this will contain the
-wrangled vectors that are read inside the function.}
+\item{df}{A data frame object returned by \code{\link[=process_wfhz_data]{process_wfhz_data()}} or by \code{\link[=process_muac_data]{process_muac_data()}}
+They will contain the wrangled vectors that are read inside the function.}
 
 \item{.summary_by}{A character vector containing data on the geographical areas where
 the data was collected. This is to group the survey design object into different
@@ -23,6 +23,8 @@ A tibble with the PROBIT based point prevalence for global, severe and moderate
 acute malnutrition.
 }
 \description{
-This function is a helper function inside the main function \code{\link[=compute_wfhz_prevalence]{compute_wfhz_prevalence()}}.
-It is used to compute PROBIT based prevalence depending on the status of standard deviation.
+This function is a helper function used inside \code{\link[=compute_wfhz_prevalence]{compute_wfhz_prevalence()}} and
+\code{\link[=compute_mfaz_prevalence]{compute_mfaz_prevalence()}}. It is used to compute PROBIT based prevalence depending
+on the status of standard deviation. For more details, check the documentation of the
+aforementioned functions.
 }

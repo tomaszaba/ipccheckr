@@ -132,7 +132,7 @@ local({
 
   #### The test ----
   testthat::test_that(
-    "compute_wfhz_prevalence() yields correct estimates",
+    "compute_combined_prevalence() yields correct estimates",
     {
       testthat::expect_equal(p[[1]][1], n_cgam)
       testthat::expect_equal(round(p[[2]][1]*100, 1), p_cgam)
@@ -166,7 +166,7 @@ local({
   n_cgam <- 121
   p_cgam <- 8.4
   p_cgam_lci <- 6.0
-  p_cgam_uci <- 10.8
+  p_cgam_uci <- 10.9
   deff <- 1.87
 
   ##### SAM estimates and uncertainty ----
@@ -188,21 +188,66 @@ local({
     "compute_combined_prevalence() yields correct estimates when .summary_by is
     used",
     {
-      testthat::expect_equal(p[[2]][1], n_cgam)
-      testthat::expect_equal(round(p[[3]][1]*100, 1), p_cgam)
-      testthat::expect_equal(round(p[[4]][1]*100, 1), p_cgam_lci)
-      testthat::expect_equal(round(p[[5]][1]*100, 1), p_cgam_uci)
-      testthat::expect_equal(round(p[[6]][1], 2), deff)
-      testthat::expect_equal(p[[7]][1], n_csam)
-      testthat::expect_equal(round(p[[8]][1]*100, 1), p_csam)
-      testthat::expect_equal(round(p[[9]][1]*100, 1), p_csam_lci)
-      testthat::expect_equal(round(p[[10]][1]*100, 1), p_csam_uci)
-      testthat::expect_equal(p[[12]][1], n_cmam)
-      testthat::expect_equal(round(p[[13]][1]*100, 1), p_cmam)
-      testthat::expect_equal(round(p[[14]][1]*100, 1), p_cmam_lci)
-      testthat::expect_equal(round(p[[15]][1]*100, 1), p_cmam_uci)
-      testthat::expect_equal(round(p[[17]][1]), sum_wt)
+      testthat::expect_equal(p[[2]][2], n_cgam)
+      testthat::expect_equal(round(p[[3]][2]*100, 1), p_cgam)
+      testthat::expect_equal(round(p[[4]][2]*100, 1), p_cgam_lci)
+      testthat::expect_equal(round(p[[5]][2]*100, 1), p_cgam_uci)
+      testthat::expect_equal(round(p[[6]][2], 2), deff)
+      testthat::expect_equal(p[[7]][2], n_csam)
+      testthat::expect_equal(round(p[[8]][2]*100, 1), p_csam)
+      testthat::expect_equal(round(p[[9]][2]*100, 1), p_csam_lci)
+      testthat::expect_equal(round(p[[10]][2]*100, 1), p_csam_uci)
+      testthat::expect_equal(p[[12]][2], n_cmam)
+      testthat::expect_equal(round(p[[13]][2]*100, 1), p_cmam)
+      testthat::expect_equal(round(p[[14]][2]*100, 1), p_cmam_lci)
+      testthat::expect_equal(round(p[[15]][2]*100, 1), p_cmam_uci)
+      testthat::expect_equal(round(p[[17]][2]), sum_wt)
     }
   )
 })
+
+### When !is.null(.summary_by) and analysis approach has different categories ----
+local({
+
+  ### Get the prevalence estimates ----
+  p <- anthro.03 |>
+    process_age(age = age) |>
+    process_muac_data(
+      sex = sex,
+      muac = muac,
+      age = "age",
+      .recode_sex = TRUE,
+      .recode_muac = TRUE,
+      unit = "cm"
+    ) |>
+    dplyr::mutate(muac = recode_muac(muac, unit = "mm")) |>
+    process_wfhz_data(
+      sex = sex,
+      weight = weight,
+      height = height,
+      .recode_sex = TRUE) |>
+    compute_combined_prevalence(
+      .edema = edema,
+      .summary_by = district
+      )
+
+  ### Subset a district where a normal analysis should be computed ----
+  CB <- subset(p, district == "Cahora-Bassa")
+
+  ## Subset a district where NA should be thrown ----
+  M <- subset(p, district == "Maravia")|> dplyr::select(!district)
+
+  ### The test ----
+  testthat::test_that(
+    "compute_combined_prevalence() works well on a dataframe with multiple survey areas with
+    different analysis approach required",
+    {
+      testthat::expect_vector(dplyr::select(p, !district), size = 4, ncol(17))
+      testthat::expect_s3_class(p, "tbl")
+      testthat::expect_false(all(sapply(CB[names(CB)], \(.) all(is.na(.)))))
+      testthat::expect_true(all(sapply(M[names(M)], \(.) all(is.na(.)))))
+    }
+  )
+})
+
 

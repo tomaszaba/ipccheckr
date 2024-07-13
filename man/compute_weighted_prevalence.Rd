@@ -30,6 +30,6 @@ with the same length.
 prevalence where there are excess of children 6:23 over 24:59 months. It allows the
 computations to be done on a data frame. The function is used inside the main and
 exported function to compute MUAC based prevalence. Before computing the prevalence,
-the function first removed the flagged data so the computations are performed on non-fl
-agged observations.
+the function first removed the flagged data so the computations are performed on
+non-flagged observations.
 }

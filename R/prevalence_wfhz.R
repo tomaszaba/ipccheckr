@@ -113,14 +113,16 @@ apply_probit_approach <- function(x, .status = c("gam", "sam")) {
 
 #'
 #'
-#' Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach.
+#' Compute global, severe and moderate acute malnutrition prevalence using PROBIT approach
 #'
 #' @description
-#' This function is a helper function inside the main function [compute_wfhz_prevalence()].
-#' It is used to compute PROBIT based prevalence depending on the status of standard deviation.
+#' This function is a helper function used inside [compute_wfhz_prevalence()] and
+#' [compute_mfaz_prevalence()]. It is used to compute PROBIT based prevalence depending
+#' on the status of standard deviation. For more details, check the documentation of the
+#' aforementioned functions.
 #'
-#' @param df A data frame object returned by [process_wfhz_data()]. this will contain the
-#'  wrangled vectors that are read inside the function.
+#' @param df A data frame object returned by [process_wfhz_data()] or by [process_muac_data()]
+#' They will contain the wrangled vectors that are read inside the function.
 #'
 #' @param .summary_by A character vector containing data on the geographical areas where
 #'  the data was collected. This is to group the survey design object into different
@@ -206,7 +208,8 @@ compute_probit_prevalence <- function(df,
 }
 
 #'
-#' Compute acute malnutrition prevalence based on weight-for-height z-scores (WFHZ)
+#' Compute acute malnutrition prevalence based on weight-for-height z-scores (WFHZ),
+#' MUAC-for-age z-scores (MFAZ), MUAC and combined
 #'
 #' @description
 #' `compute_wfhz_prevalence()` is a handy function designed to dynamically compute acute

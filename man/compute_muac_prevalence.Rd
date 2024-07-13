@@ -28,16 +28,16 @@ areas in the data set) x 17.
 }
 \description{
 \code{compute_muac_prevalence()} is a handy function designed to dynamically compute acute
-malnutrition's prevalence using the absolute values of MUAC, but with use of MFAZ for
+malnutrition's prevalence using the absolute values of MUAC, however using the MFAZ for
 quality checks before advancing to prevalence computations. Under the hood, the function
 first checks the status of MFAZ's standard deviation (SD) after removing flags, and
 the status of age ratio among children aged 6:23 vs 24:59 months. Then it decides on the
 appropriate prevalence analysis approach to follow: (i) if SD & age ratio are both not
 problematic, a complex sample-based prevalence analysis (for a two-stage  PPS
 cluster sampling) is computed; (ii) if MFAZ's SD is not problematic, but age ratio test
-is, the CDC/SMART MUAC tool weighting approach is use to compute the prevalence; (iii)
-lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalenec
-analysis is computed and NA's (of Not Applicable) are thrown.
+is, the CDC/SMART MUAC tool weighting approach is used to compute the prevalence; (iii)
+lastly, if MFAZ's SD is problematic even if age ratio test is not, no prevalence
+analysis is computed and NA (of Not Applicable) are thrown.
 The function also super handy to work on large data sets with multiple survey areas. For
 this, the aforementioned conditionals are checked for each survey areas in a summarized
 data frame and prevalence get computed according to each row's scenario.
@@ -63,7 +63,7 @@ df = anthro.04,
 .summary_by = province
 )
 
-print(x)
+print(p)
 
 
 }
