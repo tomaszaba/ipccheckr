@@ -23,7 +23,7 @@ edema.}
 \item{edema}{A character vector of "y" = Yes, "n" = No bilateral edema.
 Default is NULL.}
 
-\item{base}{A choice of options to which you case definition should be based on.}
+\item{base}{A choice of options to which your case definition should be based on.}
 }
 \value{
 A data frame with three vectors added to the input data frame: "gam",

@@ -116,7 +116,7 @@ define_wasting_cases_combined <- function(zscore, muac, edema = NULL,
 #' @param muac An integer vector containing MUAC measurements in mm.
 #' @param edema A character vector of "y" = Yes, "n" = No bilateral edema.
 #' Default is NULL.
-#' @param base A choice of options to which you case definition should be based on.
+#' @param base A choice of options to which your case definition should be based on.
 #'
 #' @returns A data frame with three vectors added to the input data frame: "gam",
 #' "sam" and "mam". If base = "combined" the vector names change to "cgam",
