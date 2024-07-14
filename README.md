@@ -9,20 +9,21 @@
 [![Codecov test
 coverage](https://codecov.io/gh/tomaszaba/ipccheckr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tomaszaba/ipccheckr?branch=main)
 <!-- badges: end -->
+<img src="man/figures/logo.png" align="right" height="250" alt="" />
 
 ## Background
 
 IPC AMN is a global tool that uses a set o protocols to classify
-geographical areas into a 5-phases of severity based on the prevalence
-of acute malnutrition among children aged 6-59 months. Its main
-objective is to provide actionable information for decision-makers. It
-is not a data collection method *per se*, therefore, it relies on
-evidence generated through other methods (representative surveys,
-screening, sentinel sites, etc). Before any evidence is used an IPC AMN
-analysis, checks must performed to ascertain the quality of data,
-following the minimum quality standards set in the protocol, hence its
-reliability. As such, only evidence that pass the checks are allowed to
-be used in an IPC analysis exercise.
+geographical areas into a 5-phases severity based on the prevalence of
+acute malnutrition among children aged 6:59 months. Its main objective
+is to provide actionable information for decision-makers. It is not a
+data collection method *per se*, therefore, it relies on evidence
+generated through other methods (representative surveys, screening,
+sentinel sites, etc). Before any evidence is used an IPC AMN analysis,
+checks must performed to ascertain the quality of data, following the
+minimum quality standards set in the protocol, hence its reliability. As
+such, only evidence that pass the checks are allowed to be used in an
+IPC analysis exercise.
 
 ## Why `ipccheckr`?
 
@@ -40,7 +41,7 @@ results into a summary table (Excel spreadsheet or other). Then, run the
 prevalence analysis (also one-by-one), and then transfer the results
 into a spreadsheet and so on and so forth. Sometimes, a fourth tool is
 used to correct for a likely overestimation of acute malnutrition
-prevalence based on MUAC when there are excess of younger children (6:59
+prevalence based on MUAC when there are excess of younger children (6:23
 months) over older children (24:59 months) in the sample. Therefore, the
 `ipccheckr` was developed simply to make the workflow simpler, joyful
 and reproducible thanks to its array of handy functions.
@@ -52,7 +53,15 @@ checkers, data processors, quality checkers, prevalence calculators as
 well as some handy functions to render formatted and presentable output
 tables on the two latter groups of functions.
 
-### Useful workflow with `ipccheckr` for data quality checks
+### Data quality checks with `ipccheckr`
+
+You can check the quality of your data based on:
+
+1.  Weight-for-height z-score (WFHZ)
+2.  MUAC-for-age z-score (MFAZ) *when **age** variable **is** available*
+3.  Absolute values of MUAC *when **age** variable **is not** available*
+
+#### Useful workflow with `ipccheckr` for data quality checks
 
 <img src="man/figures/README-mermaid-diagram-1.png" style="display: block; margin: auto;" />
 
@@ -62,12 +71,12 @@ After the data quality checks workflow, you will now be in position to
 decide whether or not you can proceed to the prevalence analysis. The
 workflow is quite simple: you use the data returned by the data
 processors in the above workflow. `ipccheckr` can compute acute
-malnutrition prevalence based one:
+malnutrition prevalence based on:
 
-1.  Weight-for-height z-scores - guide
-2.  Mid-Upper-Arm Circumference (using the absolute values) - guide
-3.  Combined prevalence - guide
-4.  MUAC-for-age z-score - guide
+1.  WFHZ and/or edema - guide
+2.  MUAC and/or edema - guide
+3.  Combined prevalence (of WFHZ and MUAC and edema) - guide
+4.  MFAZ and/or edema - guide
 
 **IMPORTANT**: Please note that `ipccheckr` is still highly experimental
 and is undergoing a lot of development. Hence, any functionalities
