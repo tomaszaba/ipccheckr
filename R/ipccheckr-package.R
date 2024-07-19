@@ -10,6 +10,8 @@
 #' @importFrom nipnTK ageRatioTest digitPreference sexRatioTest skewKurt
 #' @importFrom nipnTK greensIndex
 #' @importFrom rlang .data
+#' @importFrom rlang quo
+#' @importFrom rlang quo_is_null
 #' @importFrom rlang sym
 #' @importFrom scales label_percent label_pvalue
 #' @importFrom srvyr as_survey_design
