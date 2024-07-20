@@ -1,9 +1,10 @@
 ---
-title: "Checking if IPC Acute Malnutrition minimum sample size requeriments were met"
+title: "How to check if IPC Acute Malnutrition minimum sample size requeriments were met"
 author: "Tomás Zaba"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Checking if IPC Acute Malnutrition minimum sample size requeriments were met}
+  %\VignetteIndexEntry{How to check if IPC Acute Malnutrition minimum sample size requeriments were met}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
