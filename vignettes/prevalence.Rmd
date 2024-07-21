@@ -50,7 +50,7 @@ To demonstrate their use action, let's use different sample data sets that comes
 
 Now we can begin delving into each function. Let's start with WFHZ based prevalence
 
-### Calculating WFHZ based prevalence
+### Prevalence based on WFHZ
 
 To calculate acute malnutrition prevalence based on WFHZ you use `compute_wfhz_prevalence()` function, preceded by `process_wfhz_data()`. But first, let's inspect the `anthro.02` data. 
 
@@ -224,11 +224,11 @@ anthro.03 |>
 
 Are you able to spot the differences 😎 ? Yes, you're absolutely correct. While in Cahora-Bassa and Chiuta districts all columns are filled with numbers, in Maravia and Metuge, only the columns `gam_p`, `sam_p` and `mam_p` are filled with numbers and everything else with `NA`.
 
-### Calculating MFAZ based prevalence 
+### Prevalence based on MFAZ 
 
 `compute_mfaz_prevalence()` works and is implemented the same way as `compute_wfhz_prevalence()`, except that you prepare the data with `process_age()` then `process_muac_data()` and only after that you pass to `compute_mfaz_prevalence()`. Therefore, this is intentionally not going to be demonstrated to avoid redundancy. 
 
-### Calculating MUAC based prevalence 
+### Prevalence based on MUAC 
 
 This job is assigned to `compute_muac_prevalence()`. Once you call the function, before it starts computing the prevalence, it first starts by checking the quality of MFAZ's standard deviation and age ratio test. Yes, you read well, MFAZ's standard deviation, not on the absolute values MUAC. **However the prevalence is based on the absolute values of MUAC**. So once the standard deviation and age ratio test are checked and classified, they are used to control the prevalence computation flow as described ahead: 
 
@@ -247,7 +247,20 @@ tail(anthro.04)
 
 You see that this data has been processed already, so we can skip those steps and go straight to the prevalence. Remember that in this data, you have district adhering to each of the aforementioned situations. So you should be able to spot. 
 
-<span style="color: orange;">**Tip**💡</span> : <span style="color: orange;"> You should run the plausibility check first to know about the quality of your data. If you do that with `anthro.04` you will know which province has issues, hence what you should be expecting to see in below demonstrations, based on the conditionals above stated </span> . 
+<style>
+.callout-tip {
+  border-left: 4px solid #2ECC71; /* Green border */
+  background-color: #EAFAF1; /* Light green background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+<div class="callout-tip">
+<strong> 💡 Tip </strong>
+
+You should run the plausibility check first to know about the quality of your data. If you do that with `anthro.04` you will know which province has issues, hence what you should be expecting to see in below demonstrations, based on the conditionals above stated.
+</div>
 
 ```{r wfhz.3a, echo = TRUE, eval = FALSE}
 anthro.04 |> 
@@ -325,7 +338,7 @@ anthro.02 |>
 ```
 
 
-### Calculating combined prevalence 
+### Combined prevalence 
 
 Combined prevalence is calculated using `compute_combined_prevalence()`. The case definition uses WFHZ, the absolute values of MUAC and edema. On the workflow standpoint, it combines `compute_wfhz_prevalence()` and `compute_muac_prevalence()`'s workflows as demonstrated below: 
 
@@ -464,4 +477,9 @@ anthro.01 |>
 
 In `District E` `NA` were returned because there were issues with the data. I leave it to you to figure out what was/were the issue/issues. 
 
-<span style="color: orange;">**Tip**💡</span> : <span style="color: orange;"> Consider running the plausibility checkers </span> . 
+</style>
+<div class="callout-tip">
+<strong> 💡 Tip </strong>
+
+Think of running the plausibility checkers.
+</div>

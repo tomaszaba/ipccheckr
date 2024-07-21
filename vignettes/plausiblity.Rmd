@@ -1,10 +1,11 @@
 ---
-title: "How to run plausibility check with `ipccheckr`?"
+title: "How to run plausibility check"
 author: Tomás Zaba
 output: rmarkdown::html_vignette
+css: style.css
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 vignette: >
-  %\VignetteIndexEntry{How to run plausibility check with `ipccheckr`?}
+  %\VignetteIndexEntry{How to run plausibility check}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +20,7 @@ knitr::opts_chunk$set(
 library(ipccheckr)
 ```
 
-## Introduction
+# Introduction
 
 `ipccheckr` provides handy functions to run plausibility checks on anthropometric data, more specifically on weight-for-height z-score (WFHZ), MUAC-for-age z-score (MFAZ) and on the absolute values of MUAC. In this vignette, you will learn on how to use `ipccheckr` functions designed to this end. A step-by-step approach is used from preparing the data to feed into *de facto* plausibility checkers, including on how to render an already formatted and ready-to-share/present output table. Throughout this vignette, you will also learn about when you should consider running MFAZ plausibility check over the absolute values of MUAC.
 
@@ -27,7 +28,7 @@ For demonstration, an `ipccheckr` built-in sample data set named `anthro.01` is 
 
 Let's start the demonstration with the plausibility checks that, most likely, you are familiar with, and then we move to ones you are least familiar with. 
 
-## Checking weight-for-height z-score's plausibility
+## Plausibility check on WFHZ
 
 You check the plausibility of your WFHZ data by calling the `check_plausibility_wfhz()` function. But before doing that, you need to get your data into the right "shape and format" that is accepted or understood by the function. Don't worry, you will learn how to get there. Just hold on for a second as we want to make you understand what the function does. 
 
@@ -245,8 +246,7 @@ anthro.01 |>
 
 An already formatted table, with scientific notations converted into conventional notations, etc. This would be the end of your workflow.
 
-## Checking plausibility on MUAC data
-### MUAC-for-age z-score (MFAZ)
+## Plausibility check on MFAZ
 
 You will decide to check plausibility of MFAZ if you have age variable in your data set, otherwise, you will check on the absolute values of MUAC. The latter option is described in a dedicated section below. In this section, you will learn about MFAZ. 
 
@@ -254,12 +254,22 @@ The MFAZ plausibility check was built based on the insights gotten from [Bilukha
 
 With `ipccheckr`, you can run MFAZ plausibility check using `check_plausibility_mfaz()`. Similar to WFHZ, you first have to get the data in the right shape and format that `check_plausibility_mfaz()` understands. First foremost, you have process age. You do this exactly the same way as demonstrated above in the WFHZ section. The demonstration is intentionally skipped in this section. If you have doubts, please review above. 
 
+<style>
+.callout-note {
+  border-left: 4px solid #1E90FF; /* Blue border */
+  background-color: #E6F7FF; /* Light blue background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+<div class="callout-note">
+<strong>ℹ Note </strong>
 
-<span style="color: #FF6347;">**Important note on age ratio test inside `check_plausibility_mfaz()`**</span>
+As you know, the age ratio test in WFHZ is done on children aged 6:29 over 30-59 months. In MFAZ, it is slightly different. The test is done on children aged 6:23 over 24-59 months as you see it done in [SMART MUAC Tool](https://smartmethodology.org/survey-planning-tools/updated-muac-tool/), but on these age group's ratio, to detect for excess of younger children (6:23 months) in the sample over older children (24:59 months), to then decide whether the MUAC prevalence should be weighted or not. In `ipccheckr` the same approach is used, but by calculating the Chi-squared test and return the p-value and classify it using the same criteria as that of WFHZ. The test results is also used in the prevalence analysis to, conditionally, do what the SMART MUAC tool does. This is further demonstrated in the vignette about prevalence.
+</div>
 
-<span style="color: #FF6347;">As you know, the age ratio test in WFHZ is done on children aged 6:29 over 30-59 months. In MFAZ, it is slightly different. The test is done on children aged 6:23 over 24-59 months as you see it done in [SMART MUAC Tool](https://smartmethodology.org/survey-planning-tools/updated-muac-tool/), but on these age group's ratio, to detect for excess of younger children (6:23 months) in the sample over older children (24:59 months), to then decide whether the MUAC prevalence should be weighted or not. In `ipccheckr` the same approach is used, but by calculating the Chi-squared test and return the p-value and classify it using the same criteria as that of WFHZ. The test results is also used in the prevalence analysis to, conditionally, do what the SMART MUAC tool does. This is further demonstrated in the vignette about prevalence.</span>
-
-
+### Data processing
 #### Processing MFAZ data 
 
 This is the job of `process_muac_data()` function. You can use it as follows:
@@ -302,7 +312,13 @@ anthro.01 |>
   )
 ```
 
-**Important**: `process_muac_data()` accepts MUAC measurements in centimeters. That is why it takes the parameters `.recode_muac` and `unit`, to control on whether or not there is need to transform the variable `muac` into the units accepted inside `zscorer::addWGSR()` function, in-charge of computing the z-scores. If your data set comes with `muac` variable in centimeters already, you set `.recode_muac` to `FALSE` and then `unit` to `"none"`. This will make the `muac` variable be untouched. Either way, the returned data frame will always have `muac` variable in centimeters as shown below (an extract from the code above):
+</style>
+
+<div class="callout-note">
+<strong>ℹ Note</strong>
+
+`process_muac_data()` accepts MUAC measurements in centimeters. That is why it takes the parameters `.recode_muac` and `unit`, to control on whether or not there is need to transform the variable `muac` into the units accepted inside `zscorer::addWGSR()` function, in-charge of computing the z-scores. If your data set comes with `muac` variable in centimeters already, you set `.recode_muac` to `FALSE` and then `unit` to `"none"`. This will make the `muac` variable be untouched. Either way, the returned data frame will always have `muac` variable in centimeters as shown below (an extract from the code above):
+</div>
 
 ```{r usage.3b, echo=FALSE}
 anthro.01 |> 
@@ -347,13 +363,24 @@ anthro.01 |>
 
 In above code, inside `dplyr::mutate()` the `muac` variable is set to be re-coded to millimeters.
 
-:::{.green}
+<style>
+.callout-warning {
+  border-left: 4px solid #FF4500; /* Red border */
+  background-color: #FDEDEC; /* Light red background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+<div class="callout-warning">
+<strong>⚠️ Warning</strong>
+
 Do not use `recode_muac()` if your variable is already in millimeters. This action will make values into something else you don't need for your workflow, so beware of that 😅 .
-:::
+</div>
 
 The above code gives you: 
 
-```{r usage.3d, echo = FALSE}
+```{r usage.3d, echo = FALSE, message=FALSE}
 
 anthro.01 |> 
   process_age(
@@ -465,7 +492,7 @@ anthro.01 |>
 
 This gives you this: 
 
-```{r usage.3h, echo = FALSE}
+```{r usage.3h, echo = FALSE, message=FALSE}
 
 anthro.01 |> 
   process_age(
@@ -494,7 +521,7 @@ anthro.01 |>
 
 To this point, you have reached the end of your workflow. 
 
-### Plausibility check on the absolute values of MUAC
+## Plausibility check on the absolute values of MUAC
 
 As mentioned somewhere in the previous section, you would run plausibility check on the absolute values of MUAC when you do not have the age variable in your data set. In this package, it's `check_plausibility_muac()`'s job. Basically, it looks into the following tests: 
 
@@ -504,6 +531,8 @@ As mentioned somewhere in the previous section, you would run plausibility check
 4) **Standard deviation** : ranges between 10.5–14.4 mm, based on [Bilukha, O., & Kianian, B. (2023).](https://doi.org/10.1111/mcn.13478). 
 
 The workflow for this check is the shortest one.
+
+### Data processing
 
 As you can tell, since your data does not have age, z-scores are not calculated for this check. Thus, your data processing workflow would be quite minimal. You set the parameters inside `process_muac_data()` according to the state of your data, as you have learned in previous sections, the only difference is that you must set `age` parameter to `NULL`. This will tell `process_muac_data()` that no age is used, so it uses an appropriate code block for this scenario. Under the hood, it checks for flags and adds a new variable **flag_muac** to the input data frame with 1 (flag) and 0 (not flag). 
   
@@ -632,7 +661,14 @@ unit = "none"
   generate_pretty_table_muac()
 ```
 
-**Note**: If you are working on multiple area data, you have to approach slightly different. You will have to use `dplyr::group_by()` as follows:
+</style>
+<div class="callout-note">
+<strong>ℹ Note</strong>
+
+If you are working on multiple area data, you have to approach slightly different. You will have to use `dplyr::group_by()`. 
+</div>
+
+You would approach like this:
 
 ```{r usage.4g, echo=TRUE, eval=FALSE}
 library(dplyr)
@@ -657,7 +693,7 @@ anthro.01 |>
 
 And you get
 
-```{r usage.4h, echo=FALSE}
+```{r usage.4h, echo=FALSE, message=FALSE}
 library(dplyr)
 
 anthro.01 |>

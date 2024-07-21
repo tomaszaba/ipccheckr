@@ -33,7 +33,7 @@ Imports:
     stats,
     zscorer,
     tibble
-Suggests: 
+Suggests:
     knitr,
     rmarkdown,
     spelling,

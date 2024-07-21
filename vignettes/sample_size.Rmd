@@ -150,6 +150,4 @@ anthro.04 |>
 
 ## So what? 
 
-So this is how you would check if your data did meet the IPC AMN requirements depending on the source or data type. Normally, this would be your first step in the `ipccheckr` workflow as it is in the IPC AMN data checks workflow. That means that if your data did meet the minimum requirements, you would then advance in the workflow to check the quality your data and then compute the prevalence, otherwise your workflow would end here. 
-
-A step-by-step vignette for performing data quality checks as well computing prevalence is also available in this package. 
+So this is how you would check if your data did meet the IPC AMN requirements depending on the source or data type. Normally, this would be your first step in the `ipccheckr` workflow as it is in the IPC AMN data checks workflow. That means that if your data did meet the minimum requirements, you would then advance in the workflow to check the quality your data and then compute the prevalence, otherwise your workflow would simply end here.
