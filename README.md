@@ -53,17 +53,19 @@ checkers, data processors, quality checkers, prevalence calculators as
 well as some handy functions to render formatted and presentable output
 tables on the two latter groups of functions.
 
-### Data quality checks with `ipccheckr`
+### Plausibility checks with `ipccheckr`
 
-You can check the quality of your data based on:
+You can run plausibility checks on:
 
-- Weight-for-height z-score (WFHZ)
-- MUAC-for-age z-score (MFAZ) *when **age** variable **is** available*
-- Absolute values of MUAC *when **age** variable **is not** available*
+- Weight-for-height z-score (WFHZ) data
+- MUAC-for-age z-score (MFAZ) data *when **age** variable **is**
+  available*
+- Absolute values of MUAC data *when **age** variable **is not**
+  available*
 
-#### Useful workflow with `ipccheckr` for data quality checks
+#### Useful workflow with `ipccheckr` for data quality check
 
-<img src="man/figures/README-mermaid-diagram-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-ipccheckr_workflow-1.png)<!-- -->
 
 ### On the prevalence analysis
 

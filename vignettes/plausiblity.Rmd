@@ -32,7 +32,11 @@ Let's start the demonstration with the plausibility checks that, most likely, yo
 
 You check the plausibility of your WFHZ data by calling the `check_plausibility_wfhz()` function. But before doing that, you need to get your data into the right "shape and format" that is accepted or understood by the function. Don't worry, you will learn how to get there. Just hold on for a second as we want to make you understand what the function does. 
 
-`check_plausibility_wfhz()` is a replica of the plausibility check function in ENA for SMART software of the [SMART Methodology](https://smartmethodology.org/). Under the hood, it runs the same statistical tests you already know from SMART, and it applies the same classification and scoring criteria for each test. Beware though that there some small differences to have in mind: (i) `check_plausibility_wfhz()` does not include MUAC in its check. This is simply due the fact that now you can run a more comprehensive plausibility check on MUAC (learn more in relevant sections below); (ii) `check_plausibility_wfhz()` allows you to run checks on a multiple area survey data at once, without having to repeat the same workflow one-by-one for the number of survey areas your data holds. 
+`check_plausibility_wfhz()` is a replica of the plausibility check function in ENA for SMART software of the [SMART Methodology](https://smartmethodology.org/). Under the hood, it runs the same statistical tests you already know from SMART, and it applies the same classification and scoring criteria for each test. Beware though that there some small differences to have in mind: 
+
+  (i) `check_plausibility_wfhz()` does not include MUAC in its check. This is simply due the fact that now you can run a more comprehensive plausibility check on MUAC (learn more in relevant sections below);
+  
+  (ii) `check_plausibility_wfhz()` allows you to run checks on a multiple area survey data at once, without having to repeat the same workflow one-by-one for the number of survey areas your data holds. 
 
 Now that you know the key features of `check_plausibility_wfhz()`, we can now start delving into how to achieve your wish. 
 
