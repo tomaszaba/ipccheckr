@@ -53,17 +53,19 @@ checkers, data processors, quality checkers, prevalence calculators as
 well as some handy functions to render formatted and presentable output
 tables on the two latter groups of functions.
 
-### Data quality checks with `ipccheckr`
+### Plausibility checks with `ipccheckr`
 
-You can check the quality of your data based on:
+You can run plausibility checks on:
 
-1.  Weight-for-height z-score (WFHZ)
-2.  MUAC-for-age z-score (MFAZ) *when **age** variable **is** available*
-3.  Absolute values of MUAC *when **age** variable **is not** available*
+- Weight-for-height z-score (WFHZ) data
+- MUAC-for-age z-score (MFAZ) data *when **age** variable **is**
+  available*
+- Absolute values of MUAC data *when **age** variable **is not**
+  available*
 
-#### Useful workflow with `ipccheckr` for data quality checks
+#### Useful workflow with `ipccheckr` for data quality check
 
-<img src="man/figures/README-mermaid-diagram-1.png" style="display: block; margin: auto;" />
+![](man/figures/README-ipccheckr_workflow-1.png)<!-- -->
 
 ### On the prevalence analysis
 
@@ -73,15 +75,53 @@ workflow is quite simple: you use the data returned by the data
 processors in the above workflow. `ipccheckr` can compute acute
 malnutrition prevalence based on:
 
-1.  WFHZ and/or edema - guide
-2.  MUAC and/or edema - guide
-3.  Combined prevalence (of WFHZ and MUAC and edema) - guide
-4.  MFAZ and/or edema - guide
+- WFHZ and/or edema - guide
+- MUAC and/or edema - guide
+- Combined prevalence (of WFHZ and MUAC and edema) - guide
+- MFAZ and/or edema - guide
 
-**IMPORTANT**: Please note that `ipccheckr` is still highly experimental
-and is undergoing a lot of development. Hence, any functionalities
-described below have a high likelihood of changing interface or approach
-as we aim for a stable working version.
+<style>
+.callout-tip {
+  border-left: 4px solid #2ECC71; /* Green border */
+  background-color: #EAFAF1; /* Light green background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+
+<div class="callout-tip">
+
+<strong>💡 Tip </strong>
+
+Despite the fact that this package was designed with the idea of
+simplifying the IPC AMN checks workflow in mind, you can absolutely use
+its utilities beyond this scope. For instance, if you are undertaking a
+research and you want to censor your data before including in your
+statistical models, etc, you can use this packages utilities for that.
+
+</div>
+
+<style>
+.callout-warning {
+  border-left: 4px solid #FF4500; /* Red border */
+  background-color: #FDEDEC; /* Light red background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+
+<div class="callout-warning">
+
+<strong>⚠️ Warning</strong>
+
+Please note that `ipccheckr` is still highly experimental and is
+undergoing a lot of development. Hence, any functionalities described
+below have a high likelihood of changing interface or approach as we aim
+for a stable working version.
+
+</div>
 
 ## Installation
 

@@ -35,76 +35,111 @@ The typical analysis workflow is overly complex, tiring and tedious, time-consum
 
 In a nutshell, the array of exported functions span from sample size checkers, data processors, quality checkers, prevalence calculators as well as some handy functions to render formatted and presentable output tables on the two latter groups of functions.
 
-### Data quality checks with `ipccheckr`
+### Plausibility checks with `ipccheckr`
 
-You can check the quality of your data based on: 
+You can run plausibility checks on: 
 
-1. Weight-for-height z-score (WFHZ) 
-2. MUAC-for-age z-score (MFAZ) _when **age** variable **is** available_ 
-3. Absolute values of MUAC _when **age** variable **is not** available_ 
+  + Weight-for-height z-score (WFHZ) data
+  + MUAC-for-age z-score (MFAZ) data _when **age** variable **is** available_ 
+  + Absolute values of MUAC data _when **age** variable **is not** available_ 
 
-#### Useful workflow with `ipccheckr` for data quality checks
-```{r mermaid-diagram, echo=FALSE, fig.align='center'}
-library(DiagrammeR)
+#### Useful workflow with `ipccheckr` for data quality check
+```{r ipccheckr_workflow, echo=FALSE, fig.align='default'}
+DiagrammeR::grViz("
+digraph ipccheckr {
+  # Default node attributes
+  node [style = filled, color = lightblue, fontname = Helvetica, fontsize = 12];
 
-mermaid(
-diagram = "
-graph TB;
-  A[Start] --> B[Get acquainted with the data at your disposal];
-  B --> C[Check if the sample size requirements were met];
-  C --> D{Met?}
-  D --> |NO| E(End);
-  D --> |YES| F{Indicator?}
-  F --> G{WFHZ};
-  G --> H[Process age];
-  H --> I[Process WFHZ data];
-  I --> J[Check Plausibility];
-  J --> K(End);
-  F --> L{MFAZ};
-  L --> M[Process age];
-  M --> N[Process MUAC data];
-  N --> O[Check Plausibility]
-  O --> P(End);
-  F --> Q{MUAC};
-  Q --> R[Process MUAC data];
-  R --> S[Check Plausibility];
-  S --> T(End);
+  # Nodes
+  node1 [label = 'Start', shape = ellipse, color = PaleGreen];
+  node2 [label = 'Anthro data', shape = parallelogram];
+  node3 [label = 'Check sample size requirements', shape = box];
+  node4 [label = 'Met?', shape = diamond, color = lightgoldenrod];
+  yes [label = 'Yes', shape = note]
+  no [label = 'No', shape = note]
   
-  style A fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style B fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style C fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style D fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style E fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style F fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style G fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px; 
-  style H fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style I fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style J fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style K fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style L fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style M fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style N fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style O fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style P fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style Q fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style R fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style S fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px;
-  style T fill:#FDFEFE, stroke:#715D58, stroke-width:1.5px
+  # Nodes for YES branch ----
+  node5 [label = 'Indicator', shape = diamond, color = lightgoldenrod];
+  node6 [label = 'WFHZ', shape = note];
+  node7 [label = 'MFAZ', shape = note];
+  node8 [label = 'MUAC', shape = note];
+  node9 [label = 'Process age', shape = box];
+  node10 [label = 'Process data', shape = box];
+  node11 [label = 'Check plausibility', shape = box];
+
+  # Node for NO branch ----
+  node12 [label = 'End of workflow', shape = oval, color = salmon];
+
+  ## Data process ----
+  node1 -> node2 [color = gray, arrowhead = vee];
+  node2 -> node3 [color = gray, arrowhead = vee];
+  node3 -> node4 [color = gray, arrowhead = vee];
+  node4 -> no [color = gray, arrowhead = vee];
+  no -> node12 [lable = 'NO', color = gray, arrowhead = vee];
   
+  ## Workflow for Yes WFZH ----
+  node4 -> yes [color = gray, arrowhead = vee]
+  yes -> node5 [color = gray, arrowhead = vee];
+  node5 -> node6 [color = gray, arrowhead = vee];
+  node6 -> node9 [color = gray, arrowhead = vee];
+  node9 -> node10 [color = gray, arrowhead = vee];
+  node10 -> node11 [color = gray, arrowhead = vee];
+  node11 -> node12 [color = gray, arrowhead = vee];
   
-", width = 800, height = 1000 )
+   ## Workflow for Yes MFAZ ----
+  node5 -> node7 [color = gray, arrowhead = vee];
+  node7 -> node9 [color = gray, arrowhead = vee];
+  node9 -> node10 [color = gray, arrowhead = vee];
+  node10 -> node11 [color = gray, arrowhead = vee];
+  node11 -> node12 [color = gray, arrowhead = vee];
+  
+  ## Workflow for Yes MUAC ----
+  node5 -> node8 [color = gray, arrowhead = vee];
+  node8 -> node10 [color = gray, arrowhead = vee];
+  node10 -> node11 [color = gray, arrowhead = vee];
+  node11 -> node12 [color = gray, arrowhead = vee];
+}
+", width = 1000, height = 800)
 ```
 
 ### On the prevalence analysis
 
 After the data quality checks workflow, you will now be in position to decide whether or not you can proceed to the prevalence analysis. The workflow is quite simple: you use the data returned by the data processors in the above workflow. `ipccheckr` can compute acute malnutrition prevalence based on:
 
-1. WFHZ and/or edema - guide
-2. MUAC and/or edema - guide
-4. Combined prevalence (of WFHZ and MUAC and edema) - guide
-3. MFAZ and/or edema - guide
+  + WFHZ and/or edema - guide
+  + MUAC and/or edema - guide
+  + Combined prevalence (of WFHZ and MUAC and edema) - guide
+  + MFAZ and/or edema - guide
 
-**IMPORTANT**: Please note that `ipccheckr` is still highly experimental and is undergoing a lot of development. Hence, any functionalities described below have a high likelihood of changing interface or approach as we aim for a stable working version.
+<style>
+.callout-tip {
+  border-left: 4px solid #2ECC71; /* Green border */
+  background-color: #EAFAF1; /* Light green background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+<div class="callout-tip">
+<strong>💡 Tip </strong>
+
+Despite the fact that this package was designed with the idea of simplifying the IPC AMN checks workflow in mind, you can absolutely use its utilities beyond this scope. For instance, if you are undertaking a research and you want to censor your data before including in your statistical models, etc, you can use this packages utilities for that. 
+</div>
+
+<style>
+.callout-warning {
+  border-left: 4px solid #FF4500; /* Red border */
+  background-color: #FDEDEC; /* Light red background */
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 10px;
+}
+</style>
+<div class="callout-warning">
+<strong>⚠️ Warning</strong>
+
+Please note that `ipccheckr` is still highly experimental and is undergoing a lot of development. Hence, any functionalities described below have a high likelihood of changing interface or approach as we aim for a stable working version.
+</div>
 
 ## Installation
 

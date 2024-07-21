@@ -4,3 +4,8 @@
 ^README\.Rmd$
 ^\.github$
 ^codecov\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^doc$
+^Meta$
