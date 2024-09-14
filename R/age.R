@@ -117,7 +117,7 @@ process_age <- function(df, svdate = NULL, birdate = NULL, age) {
 #' @param age A vector storing values about child's age in months.
 #'
 #' @param .expectedP The expected proportion of children aged 24-59 months over
-#' children aged 6-29 months, considered to be of 0.66 according to the
+#' children aged 6-23 months, considered to be of 0.66 according to the
 #' [SMART MUAC tool](https://smartmethodology.org/survey-planning-tools/updated-muac-tool/).
 #'
 #' @returns A list three statistics: `p` for p-value, `observedR` for observed ratio

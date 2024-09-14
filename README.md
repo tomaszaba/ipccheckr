@@ -80,19 +80,7 @@ malnutrition prevalence based on:
 - Combined prevalence (of WFHZ and MUAC and edema) - guide
 - MFAZ and/or edema - guide
 
-<style>
-.callout-tip {
-  border-left: 4px solid #2ECC71; /* Green border */
-  background-color: #EAFAF1; /* Light green background */
-  padding: 10px;
-  margin: 20px 0;
-  border-radius: 10px;
-}
-</style>
-
-<div class="callout-tip">
-
-<strong>💡 Tip </strong>
+<div class="tip">
 
 Despite the fact that this package was designed with the idea of
 simplifying the IPC AMN checks workflow in mind, you can absolutely use
@@ -102,19 +90,7 @@ statistical models, etc, you can use this packages utilities for that.
 
 </div>
 
-<style>
-.callout-warning {
-  border-left: 4px solid #FF4500; /* Red border */
-  background-color: #FDEDEC; /* Light red background */
-  padding: 10px;
-  margin: 20px 0;
-  border-radius: 10px;
-}
-</style>
-
-<div class="callout-warning">
-
-<strong>⚠️ Warning</strong>
+<div class="warning">
 
 Please note that `ipccheckr` is still highly experimental and is
 undergoing a lot of development. Hence, any functionalities described
